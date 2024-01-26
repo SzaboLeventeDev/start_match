@@ -12,7 +12,7 @@ type Config = {
 };
 
 const config: Config = {
-  port: parseInt(process.env.PORT || '8080', 10),
+  port: parseInt(process.env.BACKEND_PORT || '8080', 10),
 };
 
 export default config;
