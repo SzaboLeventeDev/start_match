@@ -10,5 +10,16 @@ services:
     environment:
       POSTGRES_USERNAME: developer
       POSTGRES_PASSWORD: QUKOP1fAhrn1H1pl
+  backend:
+    container_name: backend_dev
+    image: node
+    ports:
+      - 8080:8080
+    volumes:
+      - "backend_data:/data/"
+    environment:
+      BACKEND_PORT: 8080
+    depends_on:
+      - postgresdb
 volumes:
   postgresdb_data:
