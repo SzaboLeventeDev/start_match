@@ -1,6 +1,7 @@
 import app from './app';
 import config from './config';
+import logger from './logger';
 
 app.listen(config.port, () => {
-  console.log('start backend');
+  logger.info('Start backend server');
 });
