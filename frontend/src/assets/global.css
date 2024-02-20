@@ -24,3 +24,8 @@
   --w-laptop: 1024px;
   --w-laptop-l: 1440px;
 }
+
+
+*::before, ::after {
+  box-sizing: border-box;
+}

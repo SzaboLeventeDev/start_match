@@ -1,5 +1,7 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import TheHero from '@/components/TheHero.vue'
+</script>
 
 <template>
-  <main></main>
+  <TheHero />
 </template>
