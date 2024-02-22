@@ -24,7 +24,9 @@ const toggleMobileNav = () => {
       <BaseButton>Contact</BaseButton>
       <BaseButton>Q&A</BaseButton>
       <BaseButton>
-        <VIcon icon="mdi-login" />
+        <template #icon>
+          <VIcon icon="mdi-login" />
+        </template>
         Login
       </BaseButton>
     </VContainer>
