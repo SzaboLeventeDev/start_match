@@ -49,7 +49,7 @@ onMounted(() => {
   margin: 0;
   padding: 6rem 0;
   width: 100%;
-  height: 100%;
+  height: 100vh;
   background-color: var(--c-light-black);
   display: flex;
   flex-direction: column;
