@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import TheHero from '@/components/TheHero.vue'
 import TheIntroduction from '@/components/TheIntroduction.vue';
+import TheServices from '@/components/TheServices.vue';
 </script>
 
 <template>
     <VContainer class="page">
         <TheHero />
         <TheIntroduction/>
+        <TheServices/>
     </VContainer>
 </template>
 <style scoped>
