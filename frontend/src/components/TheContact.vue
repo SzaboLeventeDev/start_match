@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { sendRequest } from '@/core/sendRequest';
 import { ref } from 'vue';
 
 const email = ref<string>()
@@ -6,8 +7,13 @@ const categories = ref<string[]>(['Sponsorship Opportunities', 'User Feedback an
 const category=ref<string>()
 const message = ref<string>()
 
-const sendForm = () => {
-  console.log({email: email.value, category: category.value,message: message.value})
+const sendForm = async() => {
+  const payload = {
+    email: email.value,
+    category: category.value,
+    message: message.value
+  }
+  await sendRequest('enquiry', 'POST', payload)
 }
 </script>
 <template>
@@ -16,13 +22,18 @@ const sendForm = () => {
       <VCardTitle class="title">Contact us</VCardTitle>
       <VTextField label="Email"
       v-model="email" 
-      outlined/>
+      variant="outlined" 
+      clearable/>
       <VSelect label="Category of interest"
       v-model="category" 
       :items="categories" 
+      variant="outlined"
+      clearable
       />
       <VTextarea label="Message"
-      v-model="message"/>
+      v-model="message"
+      variant="outlined"
+      clearable />
       <VBtn type="button" class="button" @click="sendForm">Send message</VBtn>
     </VForm>
   </VContainer>
@@ -33,10 +44,13 @@ const sendForm = () => {
 }
 
 .form {
+  max-width: 800px;
+  margin: auto;
   border: 1px solid var(--c-grey);
   border-radius: 1rem;
   padding: 2rem;
   background-color: var(--c-light-blue)
+
 }
 
 .button {
