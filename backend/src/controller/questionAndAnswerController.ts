@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { qetAllFAQs } from "../services/questionAndAnswerService";
+import { getAllFAQs } from "../services/questionAndAnswerService";
 
 const FAQController = {
   /**
@@ -11,7 +11,7 @@ const FAQController = {
    */
   async getAllFAQ(req: Request, res: Response): Promise<void> {
     try {
-      const response = await qetAllFAQs();
+      const response = await getAllFAQs();
       res.status(200).json(response);
     } catch (error) {
       res.status(400).json({ message: "Bad request!" });
