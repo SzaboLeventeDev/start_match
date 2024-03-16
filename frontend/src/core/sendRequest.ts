@@ -7,7 +7,7 @@ export const sendRequest = async (
   headers?: HeadersInit
 ) => {
   try {
-    const url = `${config.protocol}://${config.host}:${config.backendPort}/api/${endpoint}`
+    const url = `${config.protocol}://${config.host}:${config.backendPort}/${endpoint}`
     const response = await fetch(url, {
       method: method,
       headers: {

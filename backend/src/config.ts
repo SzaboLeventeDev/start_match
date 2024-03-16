@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import { configDotenv } from "dotenv";
 
 export const env = process.env.NODE_ENV || "development";
 
@@ -8,6 +9,8 @@ let envPath = path.resolve(process.cwd(), `.env.${env}.local`);
 if (!fs.existsSync(envPath)) {
   envPath = path.resolve(process.cwd(), `.env.${env}`);
 }
+
+configDotenv({path: envPath})
 
 type Config = {
   port: number;

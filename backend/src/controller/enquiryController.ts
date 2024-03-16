@@ -1,7 +1,7 @@
 import { Request, Response } from "express"
 import logger from "../logger"
-import { createEnquiry } from "../services/enquiryService"
-import { EnquiryAttributes } from "../models/landingPage/enquiry"
+import { createEnquiry, getAllEnquiriesService } from "../services/enquiryService"
+import { tracingChannel } from "diagnostics_channel"
 
 /**
  * 
@@ -23,6 +23,15 @@ const enquiryController = {
       logger.error({error}) // a formátum nem biztos, hogy ez lesz. 
       //middleware kell
       res.status(500).json({message: 'Internal server error'})
+    }
+  },
+
+  async getAllEnquiries(req: Request, res: Response): Promise<void> {
+    try {
+      const enquiries = await getAllEnquiriesService()
+      res.status(200).json({enquiries})
+    } catch (error) {
+      res.status(400).json({message: "Bad request!"})
     }
   }
 }

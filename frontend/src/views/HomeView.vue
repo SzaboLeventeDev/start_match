@@ -3,6 +3,7 @@ import TheHero from '@/components/TheHero.vue'
 import TheIntroduction from '@/components/TheIntroduction.vue'
 import TheServices from '@/components/TheServices.vue'
 import TheContact from '@/components/TheContact.vue'
+import TheFAQList from '@/components/TheFAQList.vue';
 </script>
 
 <template>
@@ -11,6 +12,7 @@ import TheContact from '@/components/TheContact.vue'
     <TheIntroduction />
     <TheServices />
     <TheContact />
+    <TheFAQList />
   </VContainer>
 </template>
 <style scoped>
