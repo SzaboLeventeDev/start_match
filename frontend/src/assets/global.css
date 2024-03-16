@@ -1,0 +1,31 @@
+:root {
+  --c-black: #000000;
+  --c-blue: #14213d;
+  --c-orange: #fca311;
+  --c-grey: #e5e5e5;
+  --c-white: #ffffff;
+
+  /* Könnyebb színek */
+  --c-light-black: #333333; /* kissé világosabb fekete */
+  --c-light-blue: #1f325f; /* kissé világosabb sötétkék */
+  --c-light-orange: #ffc04d; /* kissé világosabb narancssárga */
+  --c-light-grey: #f2f2f2; /* kissé világosabb szürke */
+  --c-light-white: #f9f9f9; /* kissé világosabb fehér */
+
+  /* Sötétebb színek */
+  --c-dark-blue: #0e1c35; /* sötétebb sötétkék */
+  --c-dark-orange: #d68000; /* sötétebb narancssárga */
+  --c-dark-grey: #b8b8b8; /* sötétebb szürke */
+  --c-dark-white: #e5e5e5; /* sötétebb fehér */
+}
+
+:root {
+  --w-tablet: 768px;
+  --w-laptop: 1024px;
+  --w-laptop-l: 1440px;
+}
+
+
+*::before, ::after {
+  box-sizing: border-box;
+}

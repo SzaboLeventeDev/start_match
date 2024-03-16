@@ -8,7 +8,8 @@ services:
     volumes:
       - "postgresdb_data:/data/db"
     environment:
-      POSTGRES_USERNAME: developer
+      POSTGRES_DB: smartmatch_dev
+      POSTGRES_USER: developer
       POSTGRES_PASSWORD: QUKOP1fAhrn1H1pl
   backend:
     container_name: backend_dev
@@ -23,3 +24,4 @@ services:
       - postgresdb
 volumes:
   postgresdb_data:
+  backend_data:
