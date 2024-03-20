@@ -1,18 +1,17 @@
 <script setup lang="ts">
-import { useFAQtore } from '@/stores/useFAQStore'
+import { useFAQStore } from '../stores/useFAQStore'
 import { storeToRefs } from 'pinia'
 import { onBeforeMount } from 'vue'
 
 /**
  * Store connected declarations and destructuring
  */
-const store = useFAQtore()
+const store = useFAQStore()
 const { FAQs } = storeToRefs(store)
-const { initFAQs: initQA } = store
+const { initFAQs } = store
 
 onBeforeMount(async () => {
-  await initQA()
-  console.log('onBefoureMount', { FAQs })
+  await initFAQs()
 })
 </script>
 <template>
@@ -23,6 +22,7 @@ onBeforeMount(async () => {
         :key="`qa_${qa.questionId}`"
         :title="qa.question"
         class="panel"
+        data-test-id="faqContainer"
       >
         <template #text>
           <VLabel class="faqAnswer">
