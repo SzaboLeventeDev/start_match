@@ -1,8 +1,8 @@
-import { sendRequest } from '@/core/sendRequest'
+import { sendRequest } from '../core/sendRequest'
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 
-export const useFAQtore = defineStore('faq', () => {
+export const useFAQStore = defineStore('faq', () => {
   /**
    * states
    */
@@ -18,7 +18,7 @@ export const useFAQtore = defineStore('faq', () => {
    */
 
   /**
-   * @function initQA
+   * @function initFAQs
    * initialize frequently asked questions array. Get data from the backend
    * @returns {Promise<void>} Not returning any value
    */
@@ -26,11 +26,10 @@ export const useFAQtore = defineStore('faq', () => {
     const initValues = await sendRequest("faq")
     console.log(initValues)
     frequentlyAskedQuestions.value = [...initValues]
-
-    console.log({FAQs: FAQs.value})
   }
 
   return {
+    frequentlyAskedQuestions,
     FAQs,
     initFAQs
   }
