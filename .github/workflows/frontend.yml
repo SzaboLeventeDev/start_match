@@ -8,6 +8,10 @@ on:
     branches: ["development"]
     paths:
       - "frontend/**"
+  pull_request:
+    branches: ["development"]
+    paths:
+      - "frontend/**"
   workflow_dispatch:
 jobs:
   build:
