@@ -1,9 +1,9 @@
 import { describe, test, beforeEach, vi, expect } from 'vitest'
 import { createPinia, setActivePinia } from 'pinia'
-import { useFAQStore } from '../../stores/useFAQStore'
-import { mockFAQs } from '../../__mocks__/stores/mockFAQs'
+import { useFAQStore } from '../../../stores/useFAQStore'
+import { mockFAQs } from '../../../__mocks__/stores/mockFAQs'
 
-vi.mock('../../core/sendRequest', () => ({
+vi.mock('../../../core/sendRequest', () => ({
   sendRequest: vi.fn(() => Promise.resolve(mockFAQs))
 }))
 

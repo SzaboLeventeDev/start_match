@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { sendRequest } from '@/core/sendRequest';
+import { sendRequest } from '../core/sendRequest';
 import { ref } from 'vue';
 
 const email = ref<string>()
@@ -13,8 +13,13 @@ const sendForm = async() => {
     category: category.value,
     message: message.value
   }
-  await sendRequest('enquiry', 'POST', payload)
+  const response = await sendRequest('enquiry', 'POST', payload)
+
+  const { message: errorMessage , enquiry } = response
+
+  return errorMessage ? errorMessage : enquiry
 }
+
 </script>
 <template>
   <VContainer id="contact">
@@ -34,7 +39,7 @@ const sendForm = async() => {
       v-model="message"
       variant="outlined"
       clearable />
-      <VBtn type="button" class="button" @click="sendForm">Send message</VBtn>
+      <VBtn type="button" class="button" @click="sendForm" data-test-id="formButton">Send message</VBtn>
     </VForm>
   </VContainer>
 </template>
