@@ -17,6 +17,16 @@
   --c-dark-orange: #d68000; /* sötétebb narancssárga */
   --c-dark-grey: #b8b8b8; /* sötétebb szürke */
   --c-dark-white: #e5e5e5; /* sötétebb fehér */
+
+  --c-baground-dark: var(--c-light-black);
+  --c-form-light: var(--c-blue);
+
+  --c-text: var(--c-orange);
+
+  --c-button-background: var(--c-blue);
+  --c-button-text: var(--c-orange);
+
+  --c-flat-button-border: var(--c-orange);
 }
 
 :root {

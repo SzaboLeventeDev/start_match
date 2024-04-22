@@ -56,6 +56,8 @@ export const registrateUser = async (registrationData: RegistrableUserAttributes
 
   if (user) throw new Error('The user is already exists!');
 
+  if (registrationData.password !== registrationData.passwordAgain) throw new Error('The password is not matching for the registration!');
+
   const data: RegistrableUserAttributes = {
     ...registrationData,
     password: encryptPassword(registrationData.password),
