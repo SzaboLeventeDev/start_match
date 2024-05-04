@@ -2,7 +2,6 @@ import { NextFunction, Request, Response } from 'express';
 import { generateSession, loginUser, registrateUser } from '../services/authenticationService';
 import config from '../config';
 
-
 const authenticationController = {
   async registrateUser(req: Request, res: Response, next: NextFunction) {
     try {
