@@ -1,9 +1,9 @@
 import bcrypt from 'bcrypt';
-
+import { v4 as uuidv4 } from 'uuid';
 import { sequelizeToResponseHelper } from '../helper/sequelizeToResponseHelper';
 import { User, UserAttributes } from '../models/user';
-import { RegistrableUserAttributes } from '../types/user';
-import logger from '../logger';
+import { LoginUserAttributes, RegistrableUserAttributes } from '../types/user';
+import { Session, SessionAttributes } from '../models/session';
 /**
  * @function getUserByEmail
  * @description Search user from the database by email address.
@@ -20,6 +20,7 @@ export const getUserByEmail = async (
       'lastName',
       'dateOfBirth',
       'email',
+      'password',
       'isLogicalDeleted',
     ],
     where: {
@@ -29,7 +30,7 @@ export const getUserByEmail = async (
 
   if (!userRecords) return null;
 
-  const user = sequelizeToResponseHelper<UserAttributes>(userRecords);
+  const user = sequelizeToResponseHelper<UserAttributes>(userRecords, ['userId', 'firstName', 'lastName', 'email', 'dateOfBirth', 'password', 'isLogicalDeleted']);
   return user;
 };
 
@@ -46,12 +47,41 @@ const encryptPassword = (password: string): string => {
 };
 
 /**
+ * @function decryptPassword
+ * @description Decrypting password and compare them.
+ * @param {string} password Incoming password.
+ * @param {string} hashedPassword Stored password.
+ * @returns {boolean} Returns if the passwords are matching or not.
+ */
+const decryptPassword = async (password: string, hashedPassword: string): Promise<boolean> => {
+  const isPasswordMatching = await bcrypt.compare(password, hashedPassword);
+  return isPasswordMatching;
+};
+
+/**
+ * @function generateSession
+ * @description Generate session for the frontend application
+ * @returns {string} Returns the generated session.
+ */
+export const generateSession = async (userId: number): Promise<SessionAttributes> => {
+  const record = await Session.create({
+    sessionId: uuidv4(),
+    userId,
+    data: {},
+    expires: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
+  });
+
+  const session = sequelizeToResponseHelper<SessionAttributes>(record, ['sessionId', 'data', 'expires']);
+  return session;
+};
+
+/**
  * @function registrateUser
  * @description Register a new user to the database.
  * @param {RegistrableUserAttributes} registrationData Data added by the user
  * @returns {Promise<string>} Returning text with information about the result of the registration.
  */
-export const registrateUser = async (registrationData: RegistrableUserAttributes):Promise<string> => {
+export const registrateUser = async (registrationData: RegistrableUserAttributes): Promise<string> => {
   const user = await getUserByEmail(registrationData.email);
 
   if (user) throw new Error('The user is already exists!');
@@ -66,4 +96,24 @@ export const registrateUser = async (registrationData: RegistrableUserAttributes
   await User.create({ ...data, isLogicalDeleted: false });
 
   return 'Registration is successful!';
+};
+
+/**
+ * @function loginUser
+ * @description Login user service.
+ * Get information from the database based on the incoming email address.
+ * @param {LoginUserAttributes} loginData Incoming object includes email and password.
+ * @returns {UserAttributes} Returns the authenticated user.
+ */
+export const loginUser = async (loginData: LoginUserAttributes): Promise<UserAttributes> => {
+  const user = await getUserByEmail(loginData.email);
+
+  if (!user) throw new Error('Authentication failed!');
+
+  const isPasswordMatching = await decryptPassword(loginData.password, user.password);
+
+  if (!isPasswordMatching) {
+    throw new Error('Authentication failed');
+  }
+  return user;
 };

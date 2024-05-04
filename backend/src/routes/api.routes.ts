@@ -6,7 +6,7 @@ import validateModel from '../middleware/validateModel';
 import { Enquiry, enquiryValidationRules } from '../models/landingPage/enquiry';
 import FAQController from '../controller/questionAndAnswerController';
 import authenticationController from '../controller/authenticationController';
-import { RegistrableUsesrValidationRules, User } from '../models/user';
+import { RegistrableUserValidationRules, LoginUserValidationRules, User } from '../models/user';
 
 const router = express.Router();
 router.use(cors());
@@ -33,7 +33,9 @@ router.get('/faq', FAQController.getAllFAQ);
  */
 router.post(
   '/registration',
-  validateModel(User, RegistrableUsesrValidationRules),
+  validateModel(User, RegistrableUserValidationRules),
   authenticationController.registrateUser,
 );
+
+router.post('/login', validateModel(User, LoginUserValidationRules), authenticationController.loginUser);
 export default router;

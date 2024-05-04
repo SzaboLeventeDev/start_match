@@ -12,7 +12,7 @@ export interface UserAttributes {
   isLogicalDeleted: boolean
 }
 
-export const RegistrableUsesrValidationRules: ValidationRules = {
+export const RegistrableUserValidationRules: ValidationRules = {
   firstName: {
     required: true,
     type: 'string',
@@ -26,6 +26,18 @@ export const RegistrableUsesrValidationRules: ValidationRules = {
     type: 'string',
     validator: (value: string) => !Number.isNaN(Date.parse(value)),
   },
+  email: {
+    required: true,
+    type: 'string',
+  },
+  password: {
+    required: true,
+    type: 'string',
+    regex: /^[a-zA-Z0-9_&@#-]{8,20}$/,
+  },
+};
+
+export const LoginUserValidationRules: ValidationRules = {
   email: {
     required: true,
     type: 'string',

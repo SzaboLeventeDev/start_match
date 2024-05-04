@@ -1,8 +1,8 @@
-import fs from "fs";
-import path from "path";
-import { configDotenv } from "dotenv";
+import fs from 'fs';
+import path from 'path';
+import { configDotenv } from 'dotenv';
 
-export const env = process.env.NODE_ENV || "development";
+export const env = process.env.NODE_ENV || 'development';
 
 let envPath = path.resolve(process.cwd(), `.env.${env}.local`);
 
@@ -10,7 +10,7 @@ if (!fs.existsSync(envPath)) {
   envPath = path.resolve(process.cwd(), `.env.${env}`);
 }
 
-configDotenv({path: envPath})
+configDotenv({ path: envPath });
 
 type Config = {
   port: number;
@@ -18,14 +18,16 @@ type Config = {
   dbUser: string;
   dbPassword: string;
   dbHost: string;
+  isSessionCookieSecure: boolean
 };
 
 const config: Config = {
-  port: parseInt(process.env.BACKEND_PORT || "8080", 10),
-  dbName: process.env.POSTGRES_DB || "database",
-  dbUser: process.env.POSTGRES_USER || "user",
-  dbPassword: process.env.POSTGRES_PASSWORD || "password",
-  dbHost: process.env.POSTGRES_HOST || "localhost",
+  port: parseInt(process.env.BACKEND_PORT || '8080', 10),
+  dbName: process.env.POSTGRES_DB || 'database',
+  dbUser: process.env.POSTGRES_USER || 'user',
+  dbPassword: process.env.POSTGRES_PASSWORD || 'password',
+  dbHost: process.env.POSTGRES_HOST || 'localhost',
+  isSessionCookieSecure: process.env.SESSION_COOKIE_SECURE !== 'false',
 };
 
 export default config;

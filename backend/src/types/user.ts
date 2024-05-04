@@ -6,3 +6,5 @@ export type RegistrableUserAttributes = Omit<
 > & {
   passwordAgain: string
 };
+
+export type LoginUserAttributes = Pick<UserAttributes, 'email' | 'password'>;
