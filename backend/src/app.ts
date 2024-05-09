@@ -4,8 +4,8 @@ import errorHandler from './middleware/errorHandler';
 
 const app = express();
 
-app.use(api)
+app.use(api);
 
-app.use(errorHandler)
+app.use(errorHandler);
 
 export default app;

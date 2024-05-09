@@ -6,9 +6,13 @@ import TheHeaderVue from './components/layout/TheHeader.vue'
 <template>
   <VApp>
     <TheHeaderVue />
-    <VMain>
+    <VMain class="main">
       <RouterView />
     </VMain>
   </VApp>
 </template>
-<style scoped></style>
+<style scoped>
+.main {
+  background-color: var(--c-baground-dark);
+}
+</style>

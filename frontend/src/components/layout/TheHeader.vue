@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import BaseButton from '../ui/BaseButton.vue'
+import NavButton from '../ui/NavButton.vue'
 
 const isMobileNavBarVisible = ref(false)
 
@@ -19,23 +19,33 @@ const toggleMobileNav = () => {
       @click="toggleMobileNav"
     />
     <VContainer class="navbar" >
-      <BaseButton>About us</BaseButton>
-      <BaseButton>Our mission</BaseButton>
-      <BaseButton>Contact</BaseButton>
-      <BaseButton>Q&A</BaseButton>
-      <BaseButton>
-        <template #icon>
-          <VIcon icon="mdi-login" />
-        </template>
-        Login
-      </BaseButton>
+      <NavButton>About us</NavButton>
+      <NavButton>Our mission</NavButton>
+      <NavButton>Contact</NavButton>
+      <NavButton>Q&A</NavButton>
+      <RouterLink :to="{ name: 'login' }">
+        <NavButton>
+          <template #icon>
+            <VIcon icon="mdi-login" />
+          </template>
+          Login
+        </NavButton>
+      </RouterLink>
     </VContainer>
   </VContainer>
   <VContainer v-if='isMobileNavBarVisible' class="sidebar isVisible" >
-    <BaseButton>About us</BaseButton>
-    <BaseButton>Our mission</BaseButton>
-    <BaseButton>Contact</BaseButton>
-    <BaseButton>Q&A</BaseButton>
+    <NavButton>About us</NavButton>
+    <NavButton>Our mission</NavButton>
+    <NavButton>Contact</NavButton>
+    <NavButton>Q&A</NavButton>
+    <RouterLink :to="{ name: 'login' }">
+        <NavButton>
+          <template #icon>
+            <VIcon icon="mdi-login" />
+          </template>
+          Login
+        </NavButton>
+      </RouterLink>
   </VContainer>
 </template>
 <style scoped>

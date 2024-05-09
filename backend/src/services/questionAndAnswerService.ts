@@ -1,8 +1,8 @@
-import sequelizeToResponseHelper from "../helper/sequelizeToResponseHelper"
+import { sequelizeToResponseArrayHelper } from "../helper/sequelizeToResponseHelper"
 import { QuestionAndAnswer, QuestionAndAnswerAttributes } from "../models/questionAndAnswer"
 
 export const getAllFAQs = async(): Promise<QuestionAndAnswerAttributes[]> => {
   const models = await QuestionAndAnswer.findAll({attributes: ['questionId', 'question','answer', 'categoryId']})
-  const response = sequelizeToResponseHelper<QuestionAndAnswerAttributes>(models)
+  const response = sequelizeToResponseArrayHelper<QuestionAndAnswerAttributes>(models)
   return response
 }

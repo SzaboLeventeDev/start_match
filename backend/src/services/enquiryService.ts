@@ -1,4 +1,4 @@
-import sequelizeToResponseHelper from "../helper/sequelizeToResponseHelper";
+import { sequelizeToResponseArrayHelper } from "../helper/sequelizeToResponseHelper";
 import { Enquiry, EnquiryAttributes } from "../models/landingPage/enquiry";
 
 /**
@@ -13,13 +13,12 @@ export const createEnquiry = async (enquiryData: EnquiryAttributes): Promise<Enq
 };
 
 /**
- * 
- * @returns @function getAllEnquiriesService
+ * @function getAllEnquiriesService
  * Service to retrieve all enquiries from the database
  * @returns {Promise<EnquiryAttributes[]>} Returns an array of Enquiries
  */
 export const getAllEnquiriesService = async(): Promise<EnquiryAttributes[]>  => {
   const records = await Enquiry.findAll();
-  const enquiries = sequelizeToResponseHelper<EnquiryAttributes>(records);
+  const enquiries = sequelizeToResponseArrayHelper<EnquiryAttributes>(records);
   return enquiries;
-}
+};

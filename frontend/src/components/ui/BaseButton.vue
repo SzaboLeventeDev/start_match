@@ -1,34 +1,50 @@
 <script setup lang="ts">
 defineProps({
   rounded: Boolean,
+  mode: String,
 })
 </script>
 <template>
-  <VBtn class="button" :class="{'rounded-button': rounded}">
+  <VBtn class="button" :class="mode">
     <slot name="icon"></slot>
     <slot class="btn-text" ></slot>
   </VBtn>
 </template>
 <style scoped>
-.button {
-  width: 9rem;
-  height: 2rem;
+button {
+  border-radius: 2rem;
+  padding: 1rem;
+  border: 0;
+  background-color: var(--c-button-background);
+  color: var(--c-button-text);
+  text-transform: uppercase;
+  cursor: pointer;
+  display: flex;
+}
+
+button:disabled {
+  background-color: var(--color-button-disabled);
+  color: var(--color-button-disabled-text);
+}
+
+.flat {
   background-color: transparent;
-  color: var(--c-dark-grey);
-  border: none;
-  box-shadow: none;
+  border: 3px solid var(--c-flat-button-border);
 }
 
-.button:hover {
-  color: var(--c-orange);
-  border-bottom: 1px solid var(--c-white);
-  box-shadow: 0.1rem 2px 0 0 0 var(--c-light-grey);
-}
-
-.rounded-button {
-  width: 4rem !important; 
-  height: 4rem !important;
+.circle {
   border-radius: 50%;
-  background-color: var(--c-light-grey);
+  height: 3rem;
+  width: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (min-width: 768px) {
+  .circle {
+    width: 4rem;
+    height: 4rem;
+  }
 }
 </style>
