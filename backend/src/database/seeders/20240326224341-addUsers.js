@@ -13,6 +13,8 @@ module.exports = {
           email: 'john.doe@test.com',
           password:
             '$2a$10$.4I8.eBh7FVAao8pazGELOV8mkNPKlC6LbtiRE/CCNJoddhfWkRjW', // smartMatch_1234
+          createdAt: '2024-05-09',
+          updatedAt: '2024-05-09',
         },
         {
           firstName: 'Jane',
@@ -21,9 +23,11 @@ module.exports = {
           email: 'john.doe@test.com',
           password:
             '$2a$10$.4I8.eBh7FVAao8pazGELOV8mkNPKlC6LbtiRE/CCNJoddhfWkRjW', // smartMatch_1234
+          createdAt: '2024-05-09',
+          updatedAt: '2024-05-09',
         },
       ],
-      {}
+      {},
     );
   },
 
