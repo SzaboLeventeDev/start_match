@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { generateSession, loginUser, registrateUser } from '../services/authenticationService';
+import { generateSession, getUserRoles, loginUser, registrateUser } from '../services/authenticationService';
 import config from '../config';
 
 const authenticationController = {
@@ -23,6 +23,8 @@ const authenticationController = {
 
       const session = await generateSession(user.userId);
 
+      const userRoles = await getUserRoles(user.userId);
+
       res.cookie('session_cookie', session, {
         httpOnly: true,
         expires: session.expires,
@@ -33,6 +35,7 @@ const authenticationController = {
 
       res.status(200).json({
         message: 'Logged in successfully!',
+        roles: userRoles,
       });
     } catch (error) {
       next(error);
