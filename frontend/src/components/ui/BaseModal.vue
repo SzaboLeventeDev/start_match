@@ -17,8 +17,10 @@ const closeModal = () => {
       <header>
         <slot name="title"></slot>
       </header>
-      <slot name="content"></slot>
-      <VContainer class="modalActionButtons">
+      <template class="content">
+        <slot name="content"></slot>
+      </template>
+        <VContainer class="modalActionButtons">
         <slot name="actions"></slot>
       </VContainer>
     </VContainer>
@@ -27,7 +29,8 @@ const closeModal = () => {
 <style scoped>
 header {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
+  color: var(--c-orange)
 }
 .modal-overlay {
   position: fixed;
@@ -61,6 +64,9 @@ header {
   top: 3rem;
 }
 
+.content {
+  color: var(--c-orange);
+}
 .modalActionButtons {
   margin: 1rem 0;
   display: flex;

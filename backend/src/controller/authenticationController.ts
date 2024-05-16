@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
-import { generateSession, getUserRoles, loginUser, registrateUser } from '../services/authenticationService';
+import { generateSession, loginUser, registrateUser } from '../services/authenticationService';
+import { getValidUserRoles } from '../services/authorizationService';
 import config from '../config';
 
 const authenticationController = {
@@ -23,7 +24,7 @@ const authenticationController = {
 
       const session = await generateSession(user.userId);
 
-      const userRoles = await getUserRoles(user.userId);
+      const userRoles = await getValidUserRoles(user.userId);
 
       res.cookie('session_cookie', session, {
         httpOnly: true,

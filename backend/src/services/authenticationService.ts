@@ -146,24 +146,3 @@ export const loginUser = async (
   }
   return user;
 };
-
-/**
- * @function getUserRoles
- * @description Get roles of the user by the userId.
- * @param {number} userId Unique ID of the user in the database table.
- * @returns {Promise<number[]>} Returns with an array of role IDs.
- */
-export const getUserRoles = async (userId: number): Promise<number[]> => {
-  const userRoleAssignments = await UserAssignments.findAll({
-    attributes: ['userRoleId'],
-    where: {
-      userId,
-      isValid: true,
-    },
-  });
-
-  const roleIds = sequelizeToResponseArrayHelper<UserRoleAttributes>(userRoleAssignments)
-    .map((role) => role.userRoleId);
-
-  return roleIds;
-};

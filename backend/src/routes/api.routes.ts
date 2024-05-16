@@ -38,4 +38,9 @@ router.post(
 );
 
 router.post('/login', validateModel(User, LoginUserValidationRules), authenticationController.loginUser);
+
+/**
+ * User related endpoints
+ */
+router.post('/select-role');
 export default router;

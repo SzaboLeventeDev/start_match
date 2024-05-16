@@ -1,15 +1,21 @@
 import { DataTypes } from 'sequelize';
 import { db } from '../data/connection';
 
+export interface UserAssignmentAttributes {
+  userId: number,
+  userRoleId: number,
+  isValid: boolean,
+}
+
 export const UserAssignments = db.define(
   'userAssignments',
   {
-    id: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true,
-      allowNull: false,
-    },
+    // id: {
+    //   type: DataTypes.INTEGER,
+    //   primaryKey: true,
+    //   autoIncrement: true,
+    //   allowNull: false,
+    // },
     userId: {
       type: DataTypes.INTEGER,
       allowNull: false,

@@ -21,6 +21,11 @@ const router = createRouter({
       component: () => import('@/views/authentication/RegistrationView.vue')
     },
     {
+      path: '/select-role',
+      name: 'selectRole',
+      component: () => import('@/views/authentication/InitRoleView.vue')
+    },
+    {
       path: '/dashboard',
       name: 'dashboard',
       component: () =>import('@/views/core/DashboardView.vue')
