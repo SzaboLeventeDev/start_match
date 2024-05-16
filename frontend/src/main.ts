@@ -6,10 +6,14 @@ import '@mdi/font/css/materialdesignicons.min.css'
 import vuetify from './plugins/vuetify'
 import pinia from './stores'
 import BaseForm from './components/ui/BaseForm.vue'
+import BaseModal from './components/ui/BaseModal.vue'
+import BaseButton from './components/ui/BaseButton.vue'
 
 const app = createApp(App)
 
 app.component('base-form', BaseForm)
+app.component('base-modal', BaseModal)
+app.component('base-button', BaseButton)
 
 app.use(pinia)
 app.use(vuetify)

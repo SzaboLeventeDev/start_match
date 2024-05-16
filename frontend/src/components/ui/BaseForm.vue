@@ -8,10 +8,10 @@
     <VContainer class="formContent">
       <slot name="content" />
     </VContainer>
-    <VContainer class="buttonWrapper">
+    <template class="buttonWrapper">
 
       <slot name="actions" />
-    </VContainer>
+    </template>
   </VForm>
 </template>
 <style scoped>
@@ -36,5 +36,13 @@ form .formContent {
 .buttonWrapper {
   display: flex;
   justify-content: space-around;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+@media(min-width: 425px) {
+  .buttonWrapper {
+    flex-direction: row;
+  }
 }
 </style>

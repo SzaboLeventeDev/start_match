@@ -10,8 +10,13 @@ const loginData = ref<{ email: string; password: string }>({
 })
 
 const loginUser = async () => {
-  await sendRequest('login', 'POST', loginData.value)
-  router.push({ name: 'dashboard' }) 
+  const { roles } = await sendRequest('login', 'POST', loginData.value);
+
+  if(roles.length === 0) {
+    router.push({name: 'selectRole'});
+    return;
+  }
+  router.push({ name: 'dashboard' });
 }
 
 </script>
@@ -52,12 +57,6 @@ const loginUser = async () => {
 
 form {
   width: 80%;
-}
-
-.buttonWrapper {
-  padding: unset;
-  display: flex;
-  justify-content: space-around;
 }
 
 @media (min-width: 768px) {
