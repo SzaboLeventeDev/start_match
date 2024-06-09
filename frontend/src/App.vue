@@ -4,15 +4,20 @@ import TheHeaderVue from './components/layout/TheHeader.vue'
 </script>
 
 <template>
-  <VApp>
+  <v-app>
     <TheHeaderVue />
-    <VMain class="main">
-      <RouterView />
-    </VMain>
-  </VApp>
+    <v-main class="main">
+      <RouterView/>
+    </v-main>
+  </v-app>
 </template>
 <style scoped>
 .main {
   background-color: var(--c-baground-dark);
+  padding-top: 4rem;
+}
+.view {
+  display: flex;
+  flex-grow: 1;
 }
 </style>

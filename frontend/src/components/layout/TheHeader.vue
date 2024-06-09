@@ -1,16 +1,34 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import NavButton from '../ui/NavButton.vue'
+import { ref, computed } from 'vue';
+import NavButton from '../ui/NavButton.vue';
+import useAuthenticationStore from '@/stores/useAuthenticationStore';
+import router from '@/router';
 
-const isMobileNavBarVisible = ref(false)
+const isMobileNavBarVisible = ref(false);
+const authStore = useAuthenticationStore();
+const { logoutUser } = authStore;
 
+const userId = computed(() => authStore.getUserId);
+const isLoggedIn = computed(() => authStore.getIsLoggedIn);
 const toggleMobileNav = () => {
-  isMobileNavBarVisible.value = !isMobileNavBarVisible.value
+  isMobileNavBarVisible.value = !isMobileNavBarVisible.value;
+}
+
+const handleLoginOrLogout = () => {
+  if (isLoggedIn) {
+    logoutUser();
+    router.push({ name: 'home' });
+    return;
+  }
+  router.push({ name: 'login' });
+  return;
 }
 </script>
 <template>
-  <VContainer class="header">
-    <VLabel>SmartMatch</VLabel>
+  <v-container class="header">
+    <router-link :to="{ name: isLoggedIn ? 'dashboard' : 'home' }">
+      <v-label>SmartMatch</v-label>
+    </router-link>
     <VIcon
       icon="mdi-menu"
       color="var(--c-white)"
@@ -18,35 +36,57 @@ const toggleMobileNav = () => {
       class="hamburger"
       @click="toggleMobileNav"
     />
-    <VContainer class="navbar" >
-      <NavButton>About us</NavButton>
-      <NavButton>Our mission</NavButton>
-      <NavButton>Contact</NavButton>
-      <NavButton>Q&A</NavButton>
-      <RouterLink :to="{ name: 'login' }">
-        <NavButton>
-          <template #icon>
-            <VIcon icon="mdi-login" />
-          </template>
-          Login
-        </NavButton>
-      </RouterLink>
-    </VContainer>
-  </VContainer>
-  <VContainer v-if='isMobileNavBarVisible' class="sidebar isVisible" >
-    <NavButton>About us</NavButton>
-    <NavButton>Our mission</NavButton>
-    <NavButton>Contact</NavButton>
-    <NavButton>Q&A</NavButton>
-    <RouterLink :to="{ name: 'login' }">
-        <NavButton>
-          <template #icon>
-            <VIcon icon="mdi-login" />
-          </template>
-          Login
-        </NavButton>
-      </RouterLink>
-  </VContainer>
+    <v-container class="navbar">
+      <nav-button>About us</nav-button>
+      <nav-button>Our mission</nav-button>
+      <nav-button>Contact</nav-button>
+      <nav-button>Q&A</nav-button>
+      <router-link
+        v-if="isLoggedIn"
+        :to="{
+          name: 'profile',
+          params: {
+            userId: userId
+          }
+        }"
+      >
+        <nav-button>Profile</nav-button>
+      </router-link>
+      <router-link :to="{ name: isLoggedIn ? 'home' : 'login' }">
+      <nav-button @click="handleLoginOrLogout">
+        <template #icon>
+          <v-icon :icon="isLoggedIn ? 'mdi-logout' : 'mdi-login'" />
+        </template>
+        {{ isLoggedIn ? 'Logout' : 'Login' }}
+      </nav-button>
+    </router-link>
+    </v-container>
+  </v-container>
+  <v-container v-if="isMobileNavBarVisible" class="sidebar isVisible">
+    <nav-button v-if="!isLoggedIn">About us</nav-button>
+    <nav-button v-if="!isLoggedIn">Our mission</nav-button>
+    <nav-button>Contact</nav-button>
+    <nav-button>Q&A</nav-button>
+    <router-link
+      v-if="isLoggedIn"
+      :to="{
+        name: 'profile',
+        params: {
+          userId: userId
+        }
+      }"
+    >
+      <nav-button>Profile</nav-button>
+    </router-link>
+    <router-link :to="{ name: isLoggedIn ? 'home' : 'login' }">
+      <nav-button @click="handleLoginOrLogout">
+        <template #icon>
+          <v-icon :icon="isLoggedIn ? 'mdi-logout' : 'mdi-login'" />
+        </template>
+        {{ isLoggedIn ? 'Logout' : 'Login' }}
+      </nav-button>
+    </router-link>
+  </v-container>
 </template>
 <style scoped>
 .header {
@@ -59,7 +99,7 @@ const toggleMobileNav = () => {
 .navbar {
   display: none;
   visibility: hidden;
-  @media(min-width: 1024px) {
+  @media (min-width: 1024px) {
     display: flex;
     justify-content: flex-end;
     visibility: visible;
@@ -88,7 +128,7 @@ const toggleMobileNav = () => {
 }
 
 .hamburger {
-  z-index:10;
+  z-index: 10;
   @media (min-width: 1024px) {
     display: none;
   }

@@ -7,6 +7,8 @@ import { Enquiry, enquiryValidationRules } from '../models/landingPage/enquiry';
 import FAQController from '../controller/questionAndAnswerController';
 import authenticationController from '../controller/authenticationController';
 import { RegistrableUserValidationRules, LoginUserValidationRules, User } from '../models/user';
+import userController from '../controller/userController';
+import config from '../config';
 
 const router = express.Router();
 router.use(cors());
@@ -37,10 +39,12 @@ router.post(
   authenticationController.registrateUser,
 );
 
-router.post('/login', validateModel(User, LoginUserValidationRules), authenticationController.loginUser);
+router.post('/login', cors(config.corsOptions), validateModel(User, LoginUserValidationRules), authenticationController.loginUser);
 
 /**
  * User related endpoints
  */
 router.post('/select-role');
+
+router.get('/user/:userId', cors(config.corsOptions), userController.getUserById); // validáció, user controller
 export default router;

@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { configDotenv } from 'dotenv';
+import { CorsOptions } from 'cors';
 
 export const env = process.env.NODE_ENV || 'development';
 
@@ -18,7 +19,8 @@ type Config = {
   dbUser: string;
   dbPassword: string;
   dbHost: string;
-  isSessionCookieSecure: boolean
+  isSessionCookieSecure: boolean;
+  corsOptions: CorsOptions;
 };
 
 const config: Config = {
@@ -28,6 +30,13 @@ const config: Config = {
   dbPassword: process.env.POSTGRES_PASSWORD || 'password',
   dbHost: process.env.POSTGRES_HOST || 'localhost',
   isSessionCookieSecure: process.env.SESSION_COOKIE_SECURE !== 'false',
+  corsOptions: {
+    origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+    optionsSuccessStatus: 204,
+    preflightContinue: false,
+  },
 };
 
 export default config;

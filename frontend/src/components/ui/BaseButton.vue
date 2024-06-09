@@ -5,10 +5,10 @@ defineProps({
 })
 </script>
 <template>
-  <VBtn class="button" :class="mode">
+  <v-btn class="button" :class="mode">
     <slot name="icon"></slot>
     <slot class="btn-text" ></slot>
-  </VBtn>
+  </v-btn>
 </template>
 <style scoped>
 button {

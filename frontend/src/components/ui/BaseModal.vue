@@ -1,29 +1,34 @@
 <script setup lang="ts">
-const emit = defineEmits(['closeModal'])
+const emit = defineEmits(['closeModal']);
 const closeModal = () => {
   emit('closeModal', false)
 }
 </script>
 <template>
   <teleport to="body">
-    <VContainer class="modal-overlay">
-      <BaseButton mode="flat circle" class="closeButton" @click="closeModal">
+    <v-container class="modal-overlay">
+      <base-button mode="flat circle" class="closeButton" @click="closeModal">
         <template #actionIcon>
-          <VIcon class="material-icons" icon="close" />
+          <v-icon class="material-icons" icon="mdi-close" />
         </template>
-      </BaseButton>
-    </VContainer>
-    <VContainer class="modal">
+      </base-button>
+    </v-container>
+    <v-container class="modal">
       <header>
-        <slot name="title"></slot>
+        <v-card-title>
+
+          <slot name="title"></slot>
+        </v-card-title>
       </header>
-      <template class="content">
+      <v-card-text class="content">
         <slot name="content"></slot>
+      </v-card-text>
+      <template class="content">
       </template>
-        <VContainer class="modalActionButtons">
+        <v-container class="modalActionButtons">
         <slot name="actions"></slot>
-      </VContainer>
-    </VContainer>
+      </v-container>
+    </v-container>
   </teleport>
 </template>
 <style scoped>
@@ -48,7 +53,7 @@ header {
   max-height: 75vh;
   position: fixed;
   border: 1px solid white;
-  border-radius: 2rem;
+  border-radius: 1rem;
   padding: 1rem;
   display: flex;
   flex-direction: column;
@@ -65,12 +70,14 @@ header {
 }
 
 .content {
-  color: var(--c-orange);
+  color: var(--c-white);
+  padding: 0.5rem 0
 }
 .modalActionButtons {
   margin: 1rem 0;
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  padding: 0;
 }
 </style>

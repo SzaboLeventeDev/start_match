@@ -1,5 +1,6 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory, type NavigationGuardNext, type RouteLocationNormalized } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import useAuthenticationStore from '@/stores/useAuthenticationStore'
 
 
 const router = createRouter({
@@ -29,6 +30,12 @@ const router = createRouter({
       path: '/dashboard',
       name: 'dashboard',
       component: () =>import('@/views/core/DashboardView.vue')
+    },
+    {
+      path: '/profile/:userId',
+      name: 'profile',
+      component: () => import('@/views/core/ProfileView.vue'),
+      props: true,
     }
     // {
     //   path: '/about',
@@ -41,4 +48,19 @@ const router = createRouter({
   ]
 })
 
+router.beforeEach(
+  (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
+    const authStore = useAuthenticationStore()
+    if (
+      to.name !== 'home' &&
+      to.name !== 'registration' &&
+      to.name !== 'login' &&
+      !authStore.getIsLoggedIn
+    ) {
+      next({ name: 'login' })
+    } else {
+      next()
+    }
+  }
+)
 export default router
