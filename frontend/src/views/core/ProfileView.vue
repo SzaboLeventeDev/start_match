@@ -3,7 +3,11 @@ import { computed, ref, onMounted } from 'vue'
 import { sendRequest } from '@/core/sendRequest'
 import useAuthenticationStore from '@/stores/useAuthenticationStore'
 import type User from '@/interfaces/user'
-import type { RegistrableUser } from '@/interfaces/user';
+import type { RegistrableUser } from '@/interfaces/user'
+import inputValidationRules from '@/helpers/inputValidationRules'
+import { usePersonalDataForm } from '@/composables/usePersonalDataForm';
+import PersonalDataForm from '@/components/PersonalDataForm.vue';
+
 const store = useAuthenticationStore()
 const { getUserId } = store
 const initialUser: User = {
@@ -25,26 +29,44 @@ const initialModifiedUser: RegistrableUser = {
   profileImage: '/profilePlaceholder.jpg'
 }
 
-const user = ref<User>(initialUser);
-const modifiedUser = ref<RegistrableUser>(initialModifiedUser);
+const user = ref<User>(initialUser)
+const modifiedUser = ref<RegistrableUser>(initialModifiedUser)
 
-const id = computed(() => getUserId);
-const fullName = computed(() => `${user.value?.firstName} ${user.value.lastName}`);
-const profileImageSource = computed(() => user.value.profileImage ?? '/profilePlaceholder.jpg');
+const id = computed(() => getUserId)
+const fullName = computed(() => `${user.value?.firstName} ${user.value.lastName}`)
+const profileImageSource = computed(() => user.value.profileImage ?? '/profilePlaceholder.jpg')
 const formattedDateOfBirth = computed(() =>
   user.value.dateOfBirth ? new Date(user.value?.dateOfBirth).toLocaleDateString('hu-HU') : null
 )
 
+const {
+  personalData,
+  passwordVisibility,
+  validatePersonalData,
+  togglePasswordVisibility,
+  togglePasswordAgainVisibility,
+  menu,
+  handleDateChange,
+  formattedDate,
+} = usePersonalDataForm();
+
 const fetchUser = async () => {
   if (id.value) {
     const response = await sendRequest(`user/${id.value}`, 'GET', undefined, undefined, true)
-    user.value = response.user;
-    modifiedUser.value = response.user;
-    modifiedUser.value.passwordAgain = response.user.password
+    user.value = response.user
+    modifiedUser.value = {...response.user}
+    modifiedUser.value.passwordAgain = {...response.user.password}
   }
 }
 
-onMounted(fetchUser);
+const updateUser = async () => {
+  if(!id.value) {
+    throw new Error('Cannot update profile!');
+  }
+
+  await sendRequest(`user/update/${id.value}`, 'PUT', modifiedUser, undefined, true)
+}
+onMounted(fetchUser)
 </script>
 <template>
   <v-container class="profile">
@@ -57,7 +79,7 @@ onMounted(fetchUser);
       :src="profileImageSource"
     />
     <v-card-title>{{ fullName }}</v-card-title>
-    <base-card title="Personal data" :isEditable="true">
+    <base-card title="Personal data" :isEditable="true" :saveModification="updateUser">
       <template #content>
         <v-container>
           <v-container class="cardContentRow">
@@ -76,43 +98,75 @@ onMounted(fetchUser);
       </template>
       <template #editContent>
         <v-container>
-          <v-text-field label="First name" v-model="modifiedUser.firstName" />
-          <v-text-field label="Last name" v-model="modifiedUser.lastName" />
+          <v-text-field
+            label="First name"
+            variant="outlined"
+            v-model="modifiedUser.firstName"
+            clearable
+            :rules="[inputValidationRules.required]"
+          />
+          <v-text-field
+            label="Last name"
+            variant="outlined"
+            v-model="modifiedUser.lastName"
+            clearable
+            :rules="[inputValidationRules.required]"
+          />
           <v-text-field
             label="Email"
+            variant="outlined"
             prepend-inner-icon="mdi-email"
             v-model="modifiedUser.email"
+            clearable
             type="email"
           />
           <v-text-field
             label="Password"
+            variant="outlined"
             prepend-inner-icon="mdi-lock"
-            append-inner-icon="mdi-eye"
+            :append-inner-icon="passwordVisibility.isPasswordVisible ? 'mdi-eye-closed' : 'mdi-eye'"
             v-model="modifiedUser.password"
-            type="password"
+            clearable
+            :type="passwordVisibility.isPasswordVisible ? 'text' : 'password'"
+            @click:append-inner="togglePasswordVisibility"
           />
           <v-text-field
             label="Password again"
+            variant="outlined"
             prepend-inner-icon="mdi-lock"
-            append-inner-icon="mdi-eye"
+            :append-inner-icon="passwordVisibility.isPasswordAgainVisible ? 'mdi-eye-closed' : 'mdi-eye'"
             v-model="modifiedUser.password"
-            type="password"
+            clearable
+            :type="passwordVisibility.isPasswordAgainVisible ? 'text' : 'password'"
+            @click:append-inner="togglePasswordAgainVisibility"
           />
-          <v-text-field
-            label="Date of birth"
-            outlined
-            prepend-inner-icon="mdi-calendar"
-            :value="modifiedUser.dateOfBirth"
-          />
+          <v-menu
+          v-model="menu"
+          :close-on-content-click="false"
+          :nudge-right="40"
+          transition="scale-transition"
+          offset-y
+          min-width="auto"
+        >
+          <template v-slot:activator="{ props }">
+            <v-text-field
+              v-model="formattedDate"
+              label="Date of birth"
+              append-inner-icon="mdi-calendar"
+              variant="outlined"
+              readonly
+              v-bind="props"
+            ></v-text-field>
+          </template>
+          <v-date-picker
+            v-model="personalData.dateOfBirth"
+            no-title
+            @update:model-value="handleDateChange"
+          ></v-date-picker>
+        </v-menu>
         </v-container>
       </template>
       <!-- <v-date-input variant="outlined"></v-date-input> -->
-      <!-- <template #editActions>
-        <v-container class="actions">
-          <base-button>Cancel</base-button>
-          <base-button>Save</base-button>
-        </v-container>
-      </template> -->
     </base-card>
   </v-container>
 </template>

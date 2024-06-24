@@ -1,7 +1,11 @@
 <script setup lang="ts">
-import BaseButton from '@/components/ui/BaseButton.vue'
-import inputValidationRules from '@/helpers/inputValidationRules'
-import { usePersonalDataForm } from '@/composables/usePersonalDataForm'
+import { computed } from 'vue';
+import { usePersonalDataForm } from '@/composables/usePersonalDataForm';
+import inputValidationRules from '@/helpers/inputValidationRules';
+
+const props = defineProps<{
+  "title": string,
+}>();
 
 const {
   personalData,
@@ -11,16 +15,14 @@ const {
   togglePasswordAgainVisibility,
   menu,
   handleDateChange,
-  formattedDate,
-  saveUser,
 } = usePersonalDataForm();
 
+const formattedDate = computed(() => personalData.value.dateOfBirth.toISOString().slice(0, 10))
 </script>
 <template>
-  <v-container class="registrationView">
-    <base-form>
+  <base-form>
       <template #title>
-        <v-card-title>Registration</v-card-title>
+        <v-card-title>{{ props.title }}</v-card-title>
       </template>
       <template #content>
         <v-text-field
@@ -98,29 +100,10 @@ const {
         />
       </template>
       <template #actions>
-        <base-button @click="saveUser" :disabled="!validatePersonalData(personalData)"
+        <base-button @click="registrateUser" :disabled="!validatePersonalData(personalData)"
           >Registration</base-button
         >
       </template>
     </base-form>
-  </v-container>
 </template>
-<style scoped>
-.registrationView {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-form button {
-  margin: auto;
-}
-
-@media (min-width: 768px) {
-  form {
-    width: 400px;
-  }
-}
-</style>
+<style scoped></style>

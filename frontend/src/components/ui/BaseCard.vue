@@ -5,6 +5,7 @@ import { CardState } from '@/enums/cardState';
 const props = defineProps<{
   title: string,
   isEditable: boolean,
+  saveModification: Function
 }>()
 
 /** refs */
@@ -13,9 +14,11 @@ const cardModifierIcon = computed(() =>
   cardState.value === CardState.Edit ? 'mdi-floppy' : 'mdi-pencil'
 )
 
-const modifyCardState = () => {
+const modifyCardState = async () => {
   if (cardState.value === CardState.Edit) {
-    // meg kell vizsgálni, hogy a close gomb hatására miért vált kártyaállapotot.
+    const {saveModification } = props
+
+    await saveModification()
     cardState.value = CardState.Read;
     return;
   }
