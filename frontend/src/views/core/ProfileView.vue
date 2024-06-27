@@ -1,4 +1,4 @@
-<script setup lang="ts">
+j<script setup lang="ts">
 import { computed, ref, onMounted } from 'vue'
 import { sendRequest } from '@/core/sendRequest'
 import useAuthenticationStore from '@/stores/useAuthenticationStore'
@@ -6,7 +6,6 @@ import type User from '@/interfaces/user'
 import type { RegistrableUser } from '@/interfaces/user'
 import inputValidationRules from '@/helpers/inputValidationRules'
 import { usePersonalDataForm } from '@/composables/usePersonalDataForm';
-import PersonalDataForm from '@/components/PersonalDataForm.vue';
 
 const store = useAuthenticationStore()
 const { getUserId } = store
@@ -63,9 +62,11 @@ const updateUser = async () => {
   if(!id.value) {
     throw new Error('Cannot update profile!');
   }
-
-  await sendRequest(`user/update/${id.value}`, 'PUT', modifiedUser, undefined, true)
+  
+  const updatedUser = await sendRequest(`user/update/${id.value}`, 'PUT', modifiedUser.value, undefined, true)
+  user.value = updatedUser.user
 }
+
 onMounted(fetchUser)
 </script>
 <template>
