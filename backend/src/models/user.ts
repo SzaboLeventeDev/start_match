@@ -12,7 +12,7 @@ export interface UserAttributes {
   isLogicalDeleted: boolean
 }
 
-export const RegistrableUserValidationRules: ValidationRules = {
+export const UserPersonalDataValidationRules: ValidationRules = {
   firstName: {
     required: true,
     type: 'string',

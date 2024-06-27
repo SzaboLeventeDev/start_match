@@ -1,22 +1,22 @@
 import { DataTypes } from 'sequelize';
-import { UUID } from 'crypto';
 import { db } from '../data/connection';
+import { v4 as uuidv4 } from 'uuid';
 
 export interface SessionAttributes {
-  sessionId: UUID,
+  sessionId: string;
   // userId: number,
-  data: object,
-  expires: Date,
+  data: object;
+  expires: Date;
 }
 
 export const Session = db.define(
   'session',
   {
     sessionId: {
-      type: DataTypes.UUID,
+      type: DataTypes.STRING,
       allowNull: false,
       primaryKey: true,
-      defaultValue: DataTypes.UUIDV4,
+      defaultValue: uuidv4(),
     },
     userId: {
       type: DataTypes.INTEGER,

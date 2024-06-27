@@ -1,22 +1,16 @@
 {
   "root": true,
   "parser": "@typescript-eslint/parser",
-  "extends": [
-    "prettier",
-    "eslint:recommended",
-    "airbnb-base",
-    "plugin:@typescript-eslint/recommended"
-  ],
+  "extends": ["prettier", "eslint:recommended", "airbnb-base", "plugin:@typescript-eslint/recommended", "plugin:prettier/recommended"],
   "plugins": ["@typescript-eslint"],
   "rules": {
+    // "no-console": process.env.NODE_ENV === 'production' ? 'error' : 'off',
+    // "no-debugger": process.env.NODE_ENV === 'production' ? 'error' : 'off',
     "import/prefer-default-export": "off",
     "linebreak-style": 0,
     "no-underscore-dangle": "off",
     "func-names": "off",
-    "@typescript-eslint/no-unused-vars": [
-      "error",
-      { "argsIgnorePattern": "^_" }
-    ],
+    "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
     "import/extensions": [
       "error",
       "ignorePackages",
@@ -27,7 +21,18 @@
         "tsx": "never"
       }
     ],
-    "max-len": ["error", {"code": 150}]
+    "max-len": [
+      "error",
+      240,
+      2,
+      {
+        "ignoreUrls": true,
+        "ignoreComments": false,
+        "ignoreRegExpLiterals": true,
+        "ignoreStrings": true,
+        "ignoreTemplateLiterals": true
+      }
+    ]
   },
   "parserOptions": {
     "ecmaVersion": 2021,
@@ -46,6 +51,7 @@
     {
       "files": ["**/*.test.js"],
       "env": {
+        //https://www.bing.com/ck/a?!&&p=c1ef70d3cea5762eJmltdHM9MTcxODMyMzIwMCZpZ3VpZD0xMmUyZTAzNS1iMzdiLTZlNGUtMWZmMS1mNGJhYjI2NjZmOWImaW5zaWQ9NTE5MQ&ptn=3&ver=2&hsh=3&fclid=12e2e035-b37b-6e4e-1ff1-f4bab2666f9b&psq=stock+app+ui+idea&u=a1aHR0cHM6Ly9kcmliYmJsZS5jb20vdGFncy9zdG9jay1hcHA&ntb=1
         "jest": true
       },
       "plugins": ["jest"]

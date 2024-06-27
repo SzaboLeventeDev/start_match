@@ -2,16 +2,21 @@
 import BaseButton from '@/components/ui/BaseButton.vue'
 import { sendRequest } from '@/core/sendRequest'
 import router from '@/router';
-import { ref } from 'vue'
+import { ref } from 'vue';
+import useAuthenticationStore from '@/stores/useAuthenticationStore';
 
 const loginData = ref<{ email: string; password: string }>({
   email: '',
   password: ''
 })
+const store = useAuthenticationStore();
+const { initUserId, authenticateUser } = store;
 
 const loginUser = async () => {
-  const { roles } = await sendRequest('login', 'POST', loginData.value);
-
+  const { roles, userId } = await sendRequest('login', 'POST', loginData.value, undefined, true);
+  
+  initUserId(userId);
+  authenticateUser();
   if(roles.length === 0) {
     router.push({name: 'selectRole'});
     return;

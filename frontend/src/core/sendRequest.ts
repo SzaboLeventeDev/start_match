@@ -4,18 +4,25 @@ export const sendRequest = async (
   endpoint: string,
   method = 'GET',
   body?: object,
-  headers?: HeadersInit
+  headers?: HeadersInit,
+  requireAuth = false,
 ) => {
   try {
     const url = `${config.protocol}://${config.host}:${config.backendPort}/${endpoint}`
-    const response = await fetch(url, {
+    const fetchOptions: RequestInit = {
       method: method,
       headers: {
         'Content-Type': 'application/json',
-        ...headers
+        ...headers,
       },
-      body: body ? JSON.stringify(body) : null
-    })
+      body: body ? JSON.stringify(body) : null,
+    }
+    
+    if (requireAuth) {
+      fetchOptions.credentials = 'include';
+    }
+    
+    const response = await fetch(url, fetchOptions);
 
     const data = await response.json()
     if (!response.ok) {

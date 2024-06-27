@@ -37,6 +37,7 @@ const authenticationController = {
       res.status(200).json({
         message: 'Logged in successfully!',
         roles: userRoles,
+        userId: user.userId,
       });
     } catch (error) {
       next(error);

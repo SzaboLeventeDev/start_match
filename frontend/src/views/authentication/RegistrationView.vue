@@ -1,62 +1,20 @@
 <script setup lang="ts">
 import BaseButton from '@/components/ui/BaseButton.vue'
-import { ref } from 'vue'
-import type { RegistrableUser } from '@/interfaces/user'
-import { sendRequest } from '@/core/sendRequest'
-import { computed } from 'vue'
 import inputValidationRules from '@/helpers/inputValidationRules'
+import { usePersonalDataForm } from '@/composables/usePersonalDataForm'
 
-const registrationData = ref<RegistrableUser>({
-  firstName: '',
-  lastName: '',
-  dateOfBirth: new Date(),
-  email: '',
-  password: '',
-  passwordAgain: ''
-})
+const {
+  personalData,
+  passwordVisibility,
+  validatePersonalData,
+  togglePasswordVisibility,
+  togglePasswordAgainVisibility,
+  menu,
+  handleDateChange,
+  formattedDate,
+  saveUser,
+} = usePersonalDataForm();
 
-const passwordVisibility = ref<{
-  isPasswordVisible: boolean
-  isPasswordAgainVisible: boolean
-}>({ isPasswordVisible: false, isPasswordAgainVisible: false })
-
-const menu = ref<boolean>(false)
-
-const validateRegistrationData = (registrationData: RegistrableUser): boolean => {
-  if(!registrationData.firstName || registrationData.firstName === '') return false
-
-  if(!registrationData.lastName || registrationData.lastName === '') return false
-
-  if(!registrationData.email.includes('@')) return false
-
-  if(registrationData.password.length < 8) return false
-
-  if(registrationData.passwordAgain.length < 8 || registrationData.password !== registrationData.passwordAgain) return false
-
-  return true
-}
-
-const registrateUser = async (): Promise<string> => {
-  const message = await sendRequest('registration', 'POST', registrationData.value)
-  return message
-}
-
-const togglePasswordVisibility = () => {
-  passwordVisibility.value.isPasswordVisible = !passwordVisibility.value.isPasswordVisible
-}
-
-const togglePasswordAgainVisibility = () => {
-  passwordVisibility.value.isPasswordAgainVisible = !passwordVisibility.value.isPasswordAgainVisible
-}
-
-const handleDateChange = (value: Date) => {
-  const utcDate = new Date(Date.UTC(value.getFullYear(), value.getMonth(), value.getDate()));
-  registrationData.value.dateOfBirth = utcDate;
-  menu.value = false;
-}
-
-
-const formattedDate = computed(() => registrationData.value.dateOfBirth.toISOString().slice(0, 10))
 </script>
 <template>
   <v-container class="registrationView">
@@ -68,14 +26,14 @@ const formattedDate = computed(() => registrationData.value.dateOfBirth.toISOStr
         <v-text-field
           label="First name"
           variant="outlined"
-          v-model="registrationData.firstName"
+          v-model="personalData.firstName"
           clearable
           :rules="[inputValidationRules.required]"
         />
         <v-text-field
           label="Last name"
           variant="outlined"
-          v-model="registrationData.lastName"
+          v-model="personalData.lastName"
           clearable
           :rules="[inputValidationRules.required]"
         />
@@ -98,7 +56,7 @@ const formattedDate = computed(() => registrationData.value.dateOfBirth.toISOStr
             ></v-text-field>
           </template>
           <v-date-picker
-            v-model="registrationData.dateOfBirth"
+            v-model="personalData.dateOfBirth"
             no-title
             @update:model-value="handleDateChange"
           ></v-date-picker>
@@ -106,7 +64,7 @@ const formattedDate = computed(() => registrationData.value.dateOfBirth.toISOStr
         <v-text-field
           label="Email"
           variant="outlined"
-          v-model="registrationData.email"
+          v-model="personalData.email"
           type="email"
           clearable
           :rules="[inputValidationRules.email]"
@@ -114,7 +72,7 @@ const formattedDate = computed(() => registrationData.value.dateOfBirth.toISOStr
         <v-text-field
           label="Password"
           variant="outlined"
-          v-model="registrationData.password"
+          v-model="personalData.password"
           :type="passwordVisibility.isPasswordVisible ? 'text' : 'password'"
           :append-inner-icon="passwordVisibility.isPasswordVisible ? 'mdi-eye-closed' : 'mdi-eye'"
           @click:append-inner="togglePasswordVisibility"
@@ -124,7 +82,7 @@ const formattedDate = computed(() => registrationData.value.dateOfBirth.toISOStr
         <v-text-field
           label="Password again"
           variant="outlined"
-          v-model="registrationData.passwordAgain"
+          v-model="personalData.passwordAgain"
           :type="passwordVisibility.isPasswordAgainVisible ? 'text' : 'password'"
           :append-inner-icon="
             passwordVisibility.isPasswordAgainVisible ? 'mdi-eye-closed' : 'mdi-eye'
@@ -135,15 +93,14 @@ const formattedDate = computed(() => registrationData.value.dateOfBirth.toISOStr
             inputValidationRules.required,
             inputValidationRules.passwordMinLength,
             () =>
-              inputValidationRules.passwordMatch(
-                registrationData.password,
-                registrationData.passwordAgain
-              )
+              inputValidationRules.passwordMatch(personalData.password, personalData.passwordAgain)
           ]"
         />
       </template>
       <template #actions>
-        <base-button @click="registrateUser" :disabled="!validateRegistrationData(registrationData)">Registration</base-button>
+        <base-button @click="saveUser" :disabled="!validatePersonalData(personalData)"
+          >Registration</base-button
+        >
       </template>
     </base-form>
   </v-container>
