@@ -2,6 +2,7 @@ import { createApp } from 'vue';
 import App from './App.vue';
 import router from './router';
 import './assets/global.css';
+import './assets/tailwind.css'
 import '@mdi/font/css/materialdesignicons.min.css';
 import vuetify from './plugins/vuetify';
 import pinia from './stores';
