@@ -11,6 +11,7 @@ import userController from '../controller/userController';
 import config from '../config';
 import { sessionHandler } from '../middleware/sessionHandler';
 import cookieParser from 'cookie-parser';
+import authorizationController from '../controller/authorizationController';
 
 const router = express.Router();
 router.use(cors());
@@ -39,7 +40,7 @@ router.post('/login', cors(config.corsOptions), validateModel(User, LoginUserVal
 /**
  * User related endpoints
  */
-router.post('/select-role');
+router.post('/select-role', authorizationController.addUserRole);
 
 router.use(sessionHandler);
 

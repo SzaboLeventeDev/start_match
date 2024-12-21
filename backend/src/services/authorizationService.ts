@@ -2,6 +2,13 @@ import { sequelizeToResponseArrayHelper } from '../helper/sequelizeToResponseHel
 import { UserAssignmentAttributes, UserAssignments } from '../models/userAssignments';
 import { UserRoleAttributes } from '../models/userRole';
 
+/**
+ * @function addUserRole
+ * @description Assign user role to user.
+ * @param userId 
+ * @param userRoleId 
+ * @returns 
+ */
 export const addUserRole = async (userId: number, userRoleId: number): Promise<UserRoleAttributes> => {
   const record = await UserAssignments.create({ userId, userRoleId });
   const createdRole = record.get({ plain: true });

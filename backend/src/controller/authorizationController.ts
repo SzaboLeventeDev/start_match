@@ -1,7 +1,11 @@
 import { NextFunction, Request, Response } from 'express';
 import { addUserRole, getAllUserRoles } from '../services/authorizationService';
 
-const authorizationController = {
+interface AuthorizationController {
+  addUserRole: (req: Request, res: Response, next: NextFunction) => Promise<void>; // THIS IS NOT ADDING NEW ROLE. THIS IS ROLE ASSIGNMENT TO THE USER.
+}
+
+const authorizationController: AuthorizationController = {
   async addUserRole(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { userId, userRoleId } = req.body;
@@ -11,7 +15,7 @@ const authorizationController = {
         return;
       }
       const existingUserRoles = await getAllUserRoles(userId);
-      const existingRole = existingUserRoles.find((userRole) => userRole.userRoleId);
+      const existingRole = existingUserRoles.find(userRole => userRole.userRoleId);
 
       if (existingRole?.isValid) {
         res.status(400).json({ message: 'Role already exists!' });

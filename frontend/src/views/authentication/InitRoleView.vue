@@ -1,8 +1,16 @@
 <script setup lang="ts">
 import { sendRequest } from '@/core/sendRequest';
-import {UserRole} from '@/enums/userRole'
-const selectRole = (userRoleId: number) => {
-  sendRequest('/select-role', 'POST', {userRoleId})
+import { UserRole } from '@/enums/userRole';
+import useAuthenticationStore from '@/stores/useAuthenticationStore';
+import router from '@/router';
+
+const authStore = useAuthenticationStore();
+
+const { getUserId } = authStore;
+
+const selectRole = async (userRoleId: number): Promise<void> => {
+  await sendRequest('select-role', 'POST', { userId: getUserId, userRoleId });
+  router.push({name: 'dashboard'});
 }
 
 </script>
