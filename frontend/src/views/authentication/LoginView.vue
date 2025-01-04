@@ -4,23 +4,33 @@ import { sendRequest } from '@/core/sendRequest'
 import router from '@/router';
 import { ref } from 'vue';
 import useAuthenticationStore from '@/stores/useAuthenticationStore';
+import { useAuthorizationStore } from '@/stores/useAuthorizationStore';
 
 const loginData = ref<{ email: string; password: string }>({
   email: '',
   password: ''
 })
-const store = useAuthenticationStore();
-const { initUserId, authenticateUser } = store;
+const authenticationStore = useAuthenticationStore();
+const { initUserId, authenticateUser } = authenticationStore;
+
+const authorizationStore = useAuthorizationStore();
+const { userRoles, setRoles } = authorizationStore;
 
 const loginUser = async () => {
   const { roles, userId } = await sendRequest('login', 'POST', loginData.value, undefined, true);
   
   initUserId(userId);
   authenticateUser();
+
   if(roles.length === 0) {
     router.push({name: 'selectRole'});
     return;
+  } 
+
+  if(userRoles.length === 0) {
+    setRoles(roles);
   }
+
   router.push({ name: 'dashboard' });
 }
 

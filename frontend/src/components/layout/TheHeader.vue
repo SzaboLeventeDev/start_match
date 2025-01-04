@@ -5,11 +5,10 @@ import useAuthenticationStore from '@/stores/useAuthenticationStore';
 import router from '@/router';
 
 const isMobileNavBarVisible = ref(false);
-const authStore = useAuthenticationStore();
-const { logoutUser } = authStore;
-
-const userId = computed(() => authStore.getUserId);
-const isLoggedIn = computed(() => authStore.getIsLoggedIn);
+const authenticationStore = useAuthenticationStore();
+const { logoutUser } = authenticationStore;
+const userId = computed(() => authenticationStore.getUserId);
+const isLoggedIn = computed(() => authenticationStore.getIsLoggedIn);
 const toggleMobileNav = () => {
   isMobileNavBarVisible.value = !isMobileNavBarVisible.value;
 }
@@ -53,13 +52,13 @@ const handleLoginOrLogout = () => {
         <nav-button>Profile</nav-button>
       </router-link>
       <router-link :to="{ name: isLoggedIn ? 'home' : 'login' }">
-      <nav-button @click="handleLoginOrLogout">
-        <template #icon>
-          <v-icon :icon="isLoggedIn ? 'mdi-logout' : 'mdi-login'" />
-        </template>
-        {{ isLoggedIn ? 'Logout' : 'Login' }}
-      </nav-button>
-    </router-link>
+        <nav-button @click="handleLoginOrLogout">
+          <template #icon>
+            <v-icon :icon="isLoggedIn ? 'mdi-logout' : 'mdi-login'" />
+          </template>
+          {{ isLoggedIn ? 'Logout' : 'Login' }}
+        </nav-button>
+      </router-link>
     </v-container>
   </v-container>
   <v-container v-if="isMobileNavBarVisible" class="sidebar isVisible">

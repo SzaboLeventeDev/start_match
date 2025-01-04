@@ -1,32 +1,35 @@
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
-
+import { useAuthorizationStore } from './useAuthorizationStore'
 const useAuthenticationStore = defineStore('user', () => {
+  const authorizationStore = useAuthorizationStore()
+
   /** States */
-  const userId = ref<string | null>(null);
-  const isLoggedIn = ref<boolean>(false);
+  const userId = ref<string | null>(null)
+  const isLoggedIn = ref<boolean>(false)
 
   /** Getters */
-  const getUserId = computed(() => userId.value);
-  const getIsLoggedIn = computed(() => isLoggedIn.value);
+  const getUserId = computed(() => userId.value)
+  const getIsLoggedIn = computed(() => isLoggedIn.value)
 
   /** Actions */
   const initUserId = (id: string) => {
-    userId.value = id;
+    userId.value = id
   }
 
   const removeUserId = () => {
-    userId.value = null;
+    userId.value = null
   }
 
   const authenticateUser = () => {
-    isLoggedIn.value = true;
+    isLoggedIn.value = true
   }
 
-   const logoutUser = () => {
-     isLoggedIn.value = false;
-     removeUserId();
-   }
+  const logoutUser = () => {
+    isLoggedIn.value = false
+    removeUserId()
+    authorizationStore.removeUserRoles()
+  }
 
   return {
     getUserId,
@@ -34,7 +37,7 @@ const useAuthenticationStore = defineStore('user', () => {
     initUserId,
     removeUserId,
     authenticateUser,
-    logoutUser,
+    logoutUser
   }
 })
 
