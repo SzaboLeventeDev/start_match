@@ -3,12 +3,19 @@ import { ref, computed } from 'vue';
 import NavButton from '../ui/NavButton.vue';
 import useAuthenticationStore from '@/stores/useAuthenticationStore';
 import router from '@/router';
+import { useAuthorizationStore } from '@/stores/useAuthorizationStore';
+import { storeToRefs } from 'pinia';
 
 const isMobileNavBarVisible = ref(false);
 const authenticationStore = useAuthenticationStore();
+const authorizationStore = useAuthorizationStore();
+
 const { logoutUser } = authenticationStore;
+const { isAdmin } = storeToRefs(authorizationStore);
+
 const userId = computed(() => authenticationStore.getUserId);
 const isLoggedIn = computed(() => authenticationStore.getIsLoggedIn);
+const isLoggedInAdmin = computed(() => isLoggedIn && isAdmin.value);
 const toggleMobileNav = () => {
   isMobileNavBarVisible.value = !isMobileNavBarVisible.value;
 }
@@ -40,6 +47,9 @@ const handleLoginOrLogout = () => {
       <nav-button>Our mission</nav-button>
       <nav-button>Contact</nav-button>
       <nav-button>Q&A</nav-button>
+      <router-link v-if="isLoggedInAdmin" :to="{ name: 'masterData' }">
+        <nav-button>Master data</nav-button>
+      </router-link>
       <router-link
         v-if="isLoggedIn"
         :to="{
@@ -66,6 +76,9 @@ const handleLoginOrLogout = () => {
     <nav-button v-if="!isLoggedIn">Our mission</nav-button>
     <nav-button>Contact</nav-button>
     <nav-button>Q&A</nav-button>
+    <router-link v-if="isLoggedInAdmin" :to="{name: 'masterData'}">
+      <nav-button>Master data</nav-button>
+    </router-link>
     <router-link
       v-if="isLoggedIn"
       :to="{

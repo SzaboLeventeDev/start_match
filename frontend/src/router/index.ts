@@ -1,7 +1,8 @@
 import { createRouter, createWebHistory, type NavigationGuardNext, type RouteLocationNormalized } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import useAuthenticationStore from '@/stores/useAuthenticationStore'
-
+import { useAuthorizationStore } from '@/stores/useAuthorizationStore'
+import { UserRole } from '@/enums/userRole'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -29,13 +30,56 @@ const router = createRouter({
     {
       path: '/dashboard',
       name: 'dashboard',
-      component: () =>import('@/views/core/DashboardView.vue')
+      component: () => import('@/views/core/DashboardView.vue')
     },
     {
       path: '/profile/:userId',
       name: 'profile',
       component: () => import('@/views/core/ProfileView.vue'),
-      props: true,
+      props: true
+    },
+    {
+      path: '/master-data',
+      name: 'masterData',
+      component: () => import('@/views/core/masterData/MasterDataView.vue'),
+      beforeEnter: async (
+        to: RouteLocationNormalized,
+        from: RouteLocationNormalized,
+        next: NavigationGuardNext
+      ) => {
+        // check if the user role is admin to enter
+        const authorizationStore = useAuthorizationStore()
+        if (authorizationStore.userRoles.includes(UserRole.Admin)) {
+          next()
+        } else {
+          console.warn('Unauthorized access to master data')
+          // next({ name: 'unauthozized'}) // TODO: create unauthorized view
+        }
+
+        // load store
+        const { useMasterDataStore } = await import('@/stores/masterData/useMasterDataStore')
+        useMasterDataStore()
+      },
+      children: [
+        {
+          path: 'currencies',
+          name: 'currencies',
+          component: () => import('@/views/core/masterData/CurrenciesView.vue'),
+          beforeEnter: async (
+            to: RouteLocationNormalized,
+            from: RouteLocationNormalized,
+            next: NavigationGuardNext
+          ) => {
+            const { useMasterDataStore } = await import('@/stores/masterData/useMasterDataStore')
+            const masterDataStore = useMasterDataStore()
+            if (!masterDataStore.currencyStore) {
+              await masterDataStore.getAndInitCurrencyStore()
+            }
+
+            next()
+          }
+        }
+      ]
     }
     // {
     //   path: '/about',
