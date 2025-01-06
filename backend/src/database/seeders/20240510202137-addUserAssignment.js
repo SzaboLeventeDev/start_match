@@ -16,6 +16,12 @@ module.exports = {
         createdAt: '2024-05-11',
         updatedAt: '2024-05-11',
       },
+      {
+        userId: 3,
+        userRoleId: 0,
+        createdAt: '2024-05-11',
+        updatedAt: '2024-05-11',
+      },
     ]);
   },
 
