@@ -3,6 +3,7 @@ import type { Currency } from '@/interfaces/currency';
 import { useMasterDataStore } from '@/stores/masterData/useMasterDataStore';
 import { storeToRefs } from 'pinia';
 import { RouterView } from 'vue-router';
+import inputValidationRules from '@/helpers/inputValidationRules';
 
 const masterDataStore = useMasterDataStore();
 const { currencies, currencyToSave } = storeToRefs(masterDataStore.currencyStore!)
@@ -20,8 +21,8 @@ const saveCurrencyHandler = (currency: Currency) => {
     <v-btn class="addCurrencyBtn" rounded="xl" @click="addCurrency">+</v-btn>
   </v-container>
   <v-card v-if="currencyToSave" class="newCurrencyCard">
-    <v-text-field label="Currency name" v-model="currencyToSave.name" hide-details="auto"/>
-    <v-text-field label="Currency code" v-model="currencyToSave.code" hide-details="auto"/>
+    <v-text-field label="Currency name" v-model="currencyToSave.name" :rules="[inputValidationRules.currencyName]"/>
+    <v-text-field label="Currency code" v-model="currencyToSave.code" :rules="[inputValidationRules.currencyCode]"/>
     <v-container class="buttonWrapper">
       <base-button @click="saveNewCurrency">save</base-button>
       <base-button @click="cancelNewCurrency">cancel</base-button>
@@ -35,8 +36,8 @@ const saveCurrencyHandler = (currency: Currency) => {
       </template>
       <template #editContent>
         <v-container>
-          <v-text-field label="Currency name" v-model="currency.name" hide-details="auto"/>
-          <v-text-field label="Currency code" v-model="currency.code" hide-details="auto"/>
+          <v-text-field label="Currency name" v-model="currency.name" :rules="[inputValidationRules.currencyName]"/>
+          <v-text-field label="Currency code" v-model="currency.code" :rules="[inputValidationRules.currencyCode]"/>
         </v-container>
       </template>
     </base-card>
