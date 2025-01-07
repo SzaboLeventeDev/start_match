@@ -14,6 +14,8 @@ import cookieParser from 'cookie-parser';
 import authorizationController from '../controller/authorizationController';
 import { Currency, currencyValidationRules, newCurrencyValidationRules } from '../models/currency';
 import { currencyController } from '../controller/masterData/currencyController';
+import { projectCategoryController } from '../controller/masterData/projectCategoryController';
+import { newProjectCategoryValidationRules, ProjectCategory, projectCategoryValidationRules } from '../models/projectCategory';
 
 const router = express.Router();
 router.use(cors());
@@ -53,10 +55,18 @@ router.put('/user/update/:userId', cors(config.corsOptions), validateModel(User,
 /**
  * Master data related endpoints
  */
+
+/** Currency related endpoints */
 router.get('/master-data/currency/all', cors(config.corsOptions), currencyController.getCurrencies);
 router.post('/master-data/currency/add', cors(config.corsOptions), validateModel(Currency, newCurrencyValidationRules), currencyController.addCurrency);
 router.put('/master-data/currency/update/:currencyId', cors(config.corsOptions), validateModel(Currency, currencyValidationRules), currencyController.updateCurrency);
 router.delete('/master-data/currency/delete/:currencyId', cors(config.corsOptions), currencyController.deleteCurrency);
+
+/** Project category related rendpoints */
+router.get('/master-data/project-category/all', cors(config.corsOptions), validateModel(ProjectCategory, newProjectCategoryValidationRules), projectCategoryController.getProjectCategories);
+router.post('/master-data/project-category/add', cors(config.corsOptions), projectCategoryController.addProjectCategory);
+router.put('/master-data/project-category/update/:projectCategoryId', cors(config.corsOptions), validateModel(ProjectCategory, projectCategoryValidationRules), projectCategoryController.updateProjectCategory);
+router.delete('/master-data/project-category/delete/:projectCategoryId', cors(config.corsOptions), projectCategoryController.deleteProjectCategory);
 
 export default router;
 
