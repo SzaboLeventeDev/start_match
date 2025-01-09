@@ -12,7 +12,7 @@ export const getProjectCategories = async (): Promise<ProjectCategoryAttributes[
 };
 
 export const addProjectCategory = async (projectCategory: ProjectCategoryToAdd): Promise<ProjectCategoryAttributes> => {
-  const record = await ProjectCategory.create({ projectCategory });
+  const record = await ProjectCategory.create({ categoryName: projectCategory.categoryName, isLogicalDeleted: projectCategory.isLogicalDeleted });
   return record.get({ plain: true });
 };
 
