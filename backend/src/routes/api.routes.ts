@@ -63,8 +63,8 @@ router.put('/master-data/currency/update/:currencyId', cors(config.corsOptions),
 router.delete('/master-data/currency/delete/:currencyId', cors(config.corsOptions), currencyController.deleteCurrency);
 
 /** Project category related rendpoints */
-router.get('/master-data/project-category/all', cors(config.corsOptions), validateModel(ProjectCategory, newProjectCategoryValidationRules), projectCategoryController.getProjectCategories);
-router.post('/master-data/project-category/add', cors(config.corsOptions), projectCategoryController.addProjectCategory);
+router.get('/master-data/project-category/all', cors(config.corsOptions), projectCategoryController.getProjectCategories);
+router.post('/master-data/project-category/add', cors(config.corsOptions), validateModel(ProjectCategory, newProjectCategoryValidationRules), projectCategoryController.addProjectCategory);
 router.put('/master-data/project-category/update/:projectCategoryId', cors(config.corsOptions), validateModel(ProjectCategory, projectCategoryValidationRules), projectCategoryController.updateProjectCategory);
 router.delete('/master-data/project-category/delete/:projectCategoryId', cors(config.corsOptions), projectCategoryController.deleteProjectCategory);
 

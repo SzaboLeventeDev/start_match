@@ -4,14 +4,22 @@ import { RouterLink, RouterView } from 'vue-router';
 <template>
   <h1 class="pageTitle">Master data manager</h1>
   <v-container>
+    <v-container class="tileWrapper">
       <router-link :to="{ name: 'currencies' }">
         <v-container class="tile">
           <v-icon icon="mdi-cash" end/>
           <h2>Currencies</h2>
         </v-container>
       </router-link>
-    <router-view />
-  </v-container>
+      <router-link :to="{ name: 'projectCategories'}">
+        <v-container class="tile">
+          <v-icon icon="mdi-type" />
+          <h2>Project Categories</h2>
+        </v-container>
+      </router-link>
+    </v-container>
+      <router-view />
+    </v-container>
 </template>
 <style scoped lang="css">
 .pageTitle {
@@ -20,6 +28,11 @@ import { RouterLink, RouterView } from 'vue-router';
 
 a {
   text-decoration: none;
+}
+
+.tileWrapper {
+  display: flex;
+  gap: 1rem;
 }
 
 .tile {

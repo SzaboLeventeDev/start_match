@@ -1,5 +1,15 @@
+import type { ProjectCategory, ProjectCategoryToAdd } from '@/types'
 import type { Currency, CurrencyToAdd } from './currency'
 import type { Ref } from 'vue'
+import type { useCurrencyStore } from '@/stores/masterData/useCurrencyStore'
+import type { useProjectCategoryStore } from '@/stores/masterData/useProjectCategoryStore'
+
+export interface MasterDataStore {
+  currencyStore: Ref<ReturnType<typeof useCurrencyStore> | null>
+  projectCategoryStore: Ref<ReturnType<typeof useProjectCategoryStore> | null>
+  getAndInitCurrencyStore: () => Promise<void>
+  getAndInitProjectCategoryStore: () => Promise<void>
+}
 
 export interface CurrencyStore {
   currencies: Ref<Currency[]>
@@ -9,4 +19,14 @@ export interface CurrencyStore {
   addCurrency: () => void
   saveNewCurrency: () => Promise<void>
   cancelNewCurrency: () => void
+}
+
+export interface ProjectCategoryStore {
+  projectCategories: Ref<ProjectCategory[]>
+  projectCategoryToSave: Ref<ProjectCategoryToAdd | null>
+  loadProjectCategories: () => Promise<void>
+  updateProjectCategory: (item: ProjectCategory) => Promise<void>
+  addProjectCategory: () => void
+  saveNewProjectCategory: () => Promise<void>
+  cancelNewProjectCategory: () => Promise<void>
 }

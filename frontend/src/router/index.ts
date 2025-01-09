@@ -78,6 +78,24 @@ const router = createRouter({
 
             next()
           }
+        },
+        {
+          path: 'project-categories',
+          name: 'projectCategories',
+          component: () => import('@/views/core/masterData/ProjectCategoriesView.vue'),
+          beforeEnter: async (
+            to: RouteLocationNormalized,
+            from: RouteLocationNormalized,
+            next: NavigationGuardNext
+          ) => {
+            const { useMasterDataStore } = await import('@/stores/masterData/useMasterDataStore')
+            const masterDataStore = useMasterDataStore()
+            if (!masterDataStore.projectCategoryStore) {
+              await masterDataStore.getAndInitProjectCategoryStore()
+            }
+
+            next()
+          }
         }
       ]
     }
