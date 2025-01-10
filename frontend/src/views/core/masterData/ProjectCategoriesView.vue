@@ -3,6 +3,7 @@ import { RouterView } from 'vue-router';
 import { useMasterDataStore } from '@/stores/masterData/useMasterDataStore';
 import { storeToRefs } from 'pinia';
 import type { ProjectCategory } from '@/types';
+import inputValidationRules from '@/helpers/inputValidationRules';
 
 const masterDataStore = useMasterDataStore();
 const {projectCategories, projectCategoryToSave } = storeToRefs(masterDataStore.projectCategoryStore!);
@@ -11,6 +12,7 @@ const {updateProjectCategory, addProjectCategory, saveNewProjectCategory, cancel
 const saveProjectCategoryHandler = (projectCategory: ProjectCategory): void => {
   projectCategory.categoryId === undefined ? saveNewProjectCategory() : updateProjectCategory(projectCategory);
 }
+
 </script>
 <template>
   <router-view />
@@ -20,7 +22,7 @@ const saveProjectCategoryHandler = (projectCategory: ProjectCategory): void => {
   </v-container>
   <v-container v-if="projectCategoryToSave" class="newProjectCategoryCard">
     <v-card>
-      <v-text-field label="Project category name" v-model="projectCategoryToSave.categoryName" />
+      <v-text-field label="Project category name" v-model="projectCategoryToSave.categoryName" :rules="[inputValidationRules.masterData.projectCategory.projectCategoryName]"</v-text-field>/>
       <v-container class="buttonWrapper">
       <base-button @click="saveNewProjectCategory">save</base-button>
       <base-button @click="cancelNewProjectCategory">cancel</base-button>
@@ -32,7 +34,7 @@ const saveProjectCategoryHandler = (projectCategory: ProjectCategory): void => {
     :isEditable="true"
     :saveModification="() => saveProjectCategoryHandler(projectCategory)">
       <template #editContent>
-        <v-text-field label="Project category" v-model="projectCategory.categoryName"/>
+        <v-text-field label="Project category" v-model="projectCategory.categoryName" :rules="[inputValidationRules.masterData.projectCategory.projectCategoryName]"/>
         <v-checkbox label="Deleted" v-model="projectCategory.isLogicalDeleted"/>
       </template>
     </base-card>

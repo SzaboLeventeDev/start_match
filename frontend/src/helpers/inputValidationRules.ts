@@ -10,7 +10,15 @@ const inputValidationRules = {
       ? true
       : 'Length of currency name should be between 1 and 50 chars!',
   currencyCode: (value: string) =>
-    RegExp('^[A-Z]{3}$').test(value) ? true : 'Not a valid currency code!'
+    RegExp('^[A-Z]{3}$').test(value) ? true : 'Not a valid currency code!',
+  masterData: {
+    projectCategory: {
+      projectCategoryName: (value: string) =>
+        value.length > 0 && value.length <= 50
+          ? true
+          : 'Length of category name should be between 1 and 50 chars!'
+    }
+  }
 }
 
 export default inputValidationRules;
