@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc",
     "start": "set NODE_ENV=production&& docker compose up",
-    "dev": "set NODE_ENV=development&& nodemon --exec ts-node src/index.ts",
+    "dev": "set NODE_ENV=development&& docker start database_dev && nodemon --exec ts-node src/index.ts",
     "test": "jest --passWithNoTests --watchAll --verbose",
     "test:cov": "jest --coverage --passWithNoTests",
     "lint": "npx eslint . --ext .js,.ts",
@@ -16,7 +16,9 @@
     "migration:generate": "npx sequelize-cli migration:generate --name",
     "migration:undo": "npx sequelize-cli db:migrate:undo",
     "migration:generate:seed": "npx sequelize-cli seed:generate --name",
-    "migration:data": "npx sequelize-cli db:seed:all"
+    "migration:data": "npx sequelize-cli db:seed:all",
+    "migration:data:undo": "npx sequelize-cli db:seed:undo:all",
+    "migration:history": "npx sequelize-cli db:migrate:status"
   },
   "author": "Levente Szabó",
   "dependencies": {
@@ -57,6 +59,7 @@
     "nodemon": "^3.0.3",
     "sequelize-cli": "^6.6.2",
     "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
     "typescript": "^5.3.3"
   }
 }
