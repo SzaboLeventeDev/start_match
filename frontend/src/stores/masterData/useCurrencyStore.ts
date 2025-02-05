@@ -3,6 +3,7 @@ import type { Currency, CurrencyToAdd } from '@/interfaces/currency'
 import type { CurrencyStore } from '@/interfaces/stores'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import { useAuthorizationStore } from '../useAuthorizationStore'
 
 export const useCurrencyStore = defineStore('currency', (): CurrencyStore => {
   const currencies = ref<Currency[]>([])
@@ -14,6 +15,11 @@ export const useCurrencyStore = defineStore('currency', (): CurrencyStore => {
   }
 
   const updateCurrency = async (item: Currency): Promise<void> => {
+    const authStore = useAuthorizationStore()
+    if (!authStore.isAdmin) {
+      throw new Error('Unauthorized: Admin access required to update currency!')
+    }
+
     const { currency, error } = await sendRequest(
       `${baseUrl}/update/${item.currencyId}`,
       'PUT',
@@ -34,6 +40,11 @@ export const useCurrencyStore = defineStore('currency', (): CurrencyStore => {
   }
 
   const addCurrency = (): void => {
+    const authStore = useAuthorizationStore()
+    if (!authStore.isAdmin) {
+      throw new Error('Unauthorized: Admin access required to create new currency!')
+    }
+
     currencyToSave.value = {
       name: '',
       code: '',
@@ -42,7 +53,11 @@ export const useCurrencyStore = defineStore('currency', (): CurrencyStore => {
   }
 
   const saveNewCurrency = async (): Promise<void> => {
-    console.log('save currency', { isCurrency: currencyToSave.value !== null })
+    const authStore = useAuthorizationStore()
+    if (!authStore.isAdmin) {
+      throw new Error('Unauthorized: Admin access required to save the created currency!')
+    }
+
     if (currencyToSave.value !== null) {
       const { currency } = await sendRequest(
         `${baseUrl}/add`,
@@ -52,7 +67,6 @@ export const useCurrencyStore = defineStore('currency', (): CurrencyStore => {
         true
       )
 
-      console.log({ currency, currencies, firstCurrency: currencies.value[0] })
       if (currency) {
         currencies.value.push(currency)
         currencyToSave.value = null

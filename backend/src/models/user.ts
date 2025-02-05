@@ -12,6 +12,7 @@ export interface UserAttributes {
   isLogicalDeleted: boolean
 }
 
+export type Contact = Pick<UserAttributes, 'firstName' | 'lastName' | 'email'>;
 export const UserPersonalDataValidationRules: ValidationRules = {
   firstName: {
     required: true,

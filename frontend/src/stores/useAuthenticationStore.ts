@@ -5,7 +5,7 @@ const useAuthenticationStore = defineStore('user', () => {
   const authorizationStore = useAuthorizationStore()
 
   /** States */
-  const userId = ref<string | null>(null)
+  const userId = ref<number | null>(null)
   const isLoggedIn = ref<boolean>(false)
 
   /** Getters */
@@ -13,7 +13,7 @@ const useAuthenticationStore = defineStore('user', () => {
   const getIsLoggedIn = computed(() => isLoggedIn.value)
 
   /** Actions */
-  const initUserId = (id: string) => {
+  const initUserId = (id: number) => {
     userId.value = id
   }
 

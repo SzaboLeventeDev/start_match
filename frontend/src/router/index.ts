@@ -98,6 +98,16 @@ const router = createRouter({
           }
         }
       ]
+    },
+    {
+      name: 'myProjects',
+      path: '/my-projects',
+      component: () => import('@/views/core/project/MyProjectsView.vue')
+    },
+    {
+      name: 'mySelectedProject',
+      path: '/my-projects/:projectId',
+      component: () => import('@/views/core/project/MyProjectView.vue')
     }
     // {
     //   path: '/about',

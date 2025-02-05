@@ -16,6 +16,8 @@ import { Currency, currencyValidationRules, newCurrencyValidationRules } from '.
 import { currencyController } from '../controller/masterData/currencyController';
 import { projectCategoryController } from '../controller/masterData/projectCategoryController';
 import { newProjectCategoryValidationRules, ProjectCategory, projectCategoryValidationRules } from '../models/projectCategory';
+import { projectController } from '../controller/masterData/projectController';
+import { newProjectValidationRules, Project, projectValidationRules } from '../models/project';
 
 const router = express.Router();
 router.use(cors());
@@ -62,11 +64,17 @@ router.post('/master-data/currency/add', cors(config.corsOptions), validateModel
 router.put('/master-data/currency/update/:currencyId', cors(config.corsOptions), validateModel(Currency, currencyValidationRules), currencyController.updateCurrency);
 router.delete('/master-data/currency/delete/:currencyId', cors(config.corsOptions), currencyController.deleteCurrency);
 
-/** Project category related rendpoints */
+/** Project category related endpoints */
 router.get('/master-data/project-category/all', cors(config.corsOptions), projectCategoryController.getProjectCategories);
 router.post('/master-data/project-category/add', cors(config.corsOptions), validateModel(ProjectCategory, newProjectCategoryValidationRules), projectCategoryController.addProjectCategory);
 router.put('/master-data/project-category/update/:projectCategoryId', cors(config.corsOptions), validateModel(ProjectCategory, projectCategoryValidationRules), projectCategoryController.updateProjectCategory);
 router.delete('/master-data/project-category/delete/:projectCategoryId', cors(config.corsOptions), projectCategoryController.deleteProjectCategory);
+
+/** Project related endpoints */
+router.get('/project/my-projects', cors(config.corsOptions), projectController.getProjects);
+router.post('/project/add', cors(config.corsOptions), validateModel(Project, newProjectValidationRules), projectController.addProject);
+router.put('/project/update/:projectId', cors(config.corsOptions), validateModel(Project, projectValidationRules), projectController.updateProject);
+router.delete('/project/delete/:projectId', cors(config.corsOptions), validateModel(Project, projectValidationRules), projectController.deleteProject);
 
 export default router;
 

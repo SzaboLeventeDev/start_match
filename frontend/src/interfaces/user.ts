@@ -11,3 +11,5 @@ export default interface User {
 export type RegistrableUser = Omit<User, 'userId'> & {
   passwordAgain: string,
 }
+
+export type Contact = Pick<User, 'firstName' | 'lastName' | 'profileImage' | 'email'>

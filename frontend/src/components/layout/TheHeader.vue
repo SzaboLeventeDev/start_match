@@ -43,6 +43,9 @@ const handleLoginOrLogout = () => {
       @click="toggleMobileNav"
     />
     <v-container class="navbar">
+      <router-link v-if="isLoggedIn" :to="{name: 'myProjects'}">
+        <nav-button>My Projects</nav-button>
+      </router-link>
       <nav-button>About us</nav-button>
       <nav-button>Our mission</nav-button>
       <nav-button>Contact</nav-button>
@@ -72,6 +75,9 @@ const handleLoginOrLogout = () => {
     </v-container>
   </v-container>
   <v-container v-if="isMobileNavBarVisible" class="sidebar isVisible">
+    <router-link v-if="isLoggedIn" :to="{name: 'myProjects'}">
+      <nav-button>My Projects</nav-button>
+    </router-link>
     <nav-button v-if="!isLoggedIn">About us</nav-button>
     <nav-button v-if="!isLoggedIn">Our mission</nav-button>
     <nav-button>Contact</nav-button>
