@@ -8,6 +8,8 @@ import { useRoute } from 'vue-router'
 import TheCollectedPriceStatusBar from '@/components/ui/TheCollectedPriceStatusBar.vue'
 import { useProjectCategoryStore } from '@/stores/masterData/useProjectCategoryStore'
 import { useCurrencyStore } from '@/stores/masterData/useCurrencyStore'
+import { DATE_FORMAT_HINT } from '@/constants/constants'
+import inputValidationRules from '@/helpers/inputValidationRules'
 
 const projectId = ref<number>()
 const project = ref<Project | null>(null)
@@ -19,15 +21,22 @@ const profileImageSource = computed(
 
 const route = useRoute()
 const projectStore = useProjectStore()
-const currencyStore = useCurrencyStore();
+const currencyStore = useCurrencyStore()
 const masterDataStore = useMasterDataStore()
 const projectCategoryStore = useProjectCategoryStore()
 
-const { getProject } = projectStore
+const { getProject, handleCopyProjectBeforeEdit, updateProject } = projectStore
 const { projectCategories } = storeToRefs(projectCategoryStore)
-const { currencies } = storeToRefs(currencyStore);
+const { currencies } = storeToRefs(currencyStore)
+const { originalProjectWhileEdit } = storeToRefs(projectStore)
 
-const SOCIALS: {name: string, icon: string}[]=[{name: 'Facebook', icon: ''}, {name: 'Instagram', icon: ''}, {name:'X', icon: ''}, {name: 'LinkedIn', icon: ''}, {name: 'Website', icon: ''}]
+const SOCIALS: { name: string; icon: string }[] = [
+  { name: 'Facebook', icon: '' },
+  { name: 'Instagram', icon: '' },
+  { name: 'X', icon: '' },
+  { name: 'LinkedIn', icon: '' },
+  { name: 'Website', icon: '' }
+]
 
 onBeforeMount(() => {
   const id = route.params.projectId
@@ -37,20 +46,39 @@ onBeforeMount(() => {
 })
 
 onMounted(async () => {
-  await masterDataStore.getAndInitProjectCategoryStore();
-  await masterDataStore.getAndInitCurrencyStore();
+  await masterDataStore.getAndInitProjectCategoryStore()
+  await masterDataStore.getAndInitCurrencyStore()
   if (projectId.value) {
     const result = getProject(projectId.value)
     project.value = result ? result : null
   }
 })
+
+const handleEnableEditProject = () => {
+  if (project.value) {
+    projectIsEdited.value = true
+    handleCopyProjectBeforeEdit(project.value)
+  }
+}
+
+const handleUndoEditProject = () => {
+  project.value = originalProjectWhileEdit.value
+  originalProjectWhileEdit.value = null
+  projectIsEdited.value = false
+}
 </script>
 
 <template>
   <v-container v-if="project" class="project">
     <v-container id="project-header">
-      <v-container  id="project-name">
-        <v-text-field v-model="project.projectName" label="Name of the project" variant="outlined" />
+      <v-container id="project-name">
+        <v-text-field
+          v-model="project.projectName"
+          label="Name of the project"
+          variant="outlined"
+          :disabled="!projectIsEdited"
+          :rules="[inputValidationRules.project.projectName]"
+        />
       </v-container>
       <v-combobox
         v-model="project.categoryId"
@@ -60,12 +88,17 @@ onMounted(async () => {
         item-title="categoryName"
         item-value="categoryId"
         style="grid-area: category"
+        :disabled="!projectIsEdited"
+        :rules="[inputValidationRules.required]"
       />
       <v-container id="toolbar">
-        <base-button v-if="projectIsEdited" :rounded="true">
+        <base-button v-show="projectIsEdited" :rounded="true" @click="handleUndoEditProject">
           <v-icon icon="mdi-undo" />
         </base-button>
-        <base-button :rounded="true">
+        <base-button v-show="projectIsEdited" :rounded="true" @click="updateProject(project)">
+          <v-icon icon="mdi-floppy" />
+        </base-button>
+        <base-button v-show="!projectIsEdited" :rounded="true" @click="handleEnableEditProject">
           <v-icon icon="mdi-pencil" />
         </base-button>
       </v-container>
@@ -80,19 +113,44 @@ onMounted(async () => {
     <v-container id="project-detail-wrapper">
       <v-container>
         <v-textarea
-        variant="outlined"
-        label="Description"
-        readonly
-        v-model="project.description"
-        class="project-content"
-        hide-details="auto"
-        :no-resize="true"
-        id="project-description"
+          variant="outlined"
+          label="Description"
+          v-model="project.description"
+          class="project-content"
+          hide-details="auto"
+          :no-resize="true"
+          id="project-description"
+          :disabled="!projectIsEdited"
+          :rules="[inputValidationRules.project.description]"
         />
       </v-container>
       <v-container id="project-price">
-        <v-text-field label="Starting Price" v-model.number="project.startingAmount" variant="outlined" hint="The price needed to collect."/>
-        <v-combobox label="Currency" v-model="project.currencyId" :items="currencies" item-value="currencyId" item-title="name" variant="outlined"/>
+        <v-text-field
+          label="Starting Price"
+          v-model.number="project.startingAmount"
+          variant="outlined"
+          hint="The price needed to collect."
+          :disabled="!projectIsEdited"
+          :rules="[inputValidationRules.project.startPrice]"
+        />
+        <v-combobox
+          label="Currency"
+          v-model="project.currencyId"
+          :items="currencies"
+          item-value="currencyId"
+          item-title="name"
+          variant="outlined"
+          :disabled="!projectIsEdited"
+          :rules="[inputValidationRules.required]"
+        />
+        <v-text-field
+          label="Starting Date"
+          v-model="project.startDate"
+          variant="outlined"
+          :hint="DATE_FORMAT_HINT"
+          :disabled="!projectIsEdited"
+          :rules="[inputValidationRules.required]"
+        />
       </v-container>
       <v-container id="vision">
         <v-textarea
@@ -102,37 +160,71 @@ onMounted(async () => {
           hide-details="auto"
           :no-resize="true"
           variant="outlined"
+          :disabled="!projectIsEdited"
         />
       </v-container>
     </v-container>
-    
+
     <v-divider id="photos-top-separator" />
-    <v-container id="photos"> 
+    <v-container id="photos">
       <v-img alt="Selected photo about the project." class="photo selected-photo" />
       <v-container id="photo-selector">
-        <v-img class="photo selectable-photo"/>
-        <v-img class="photo selectable-photo"/>
-        <v-img class="photo selectable-photo"/>
-        <v-img class="photo selectable-photo"/>
-        <v-img class="photo selectable-photo"/>
+        <v-img class="photo selectable-photo" />
+        <v-img class="photo selectable-photo" />
+        <v-img class="photo selectable-photo" />
+        <v-img class="photo selectable-photo" />
+        <v-img class="photo selectable-photo" />
       </v-container>
-      <base-button id="add-photo-button"> Add new image</base-button>
-      <base-button id="select-photo-button"> Select images</base-button>
+      <base-button v-show="projectIsEdited" id="add-photo-button"> Add new image</base-button>
+      <base-button v-show="projectIsEdited" id="select-photo-button"> Select images</base-button>
     </v-container>
-    <v-divider id="photos-bottom-separator"/>
+    <v-divider id="photos-bottom-separator" />
     <v-container id="contact">
-      <v-img :src="profileImageSource" alt="Image of the contact person for this project." id="contact-photo"/>
+      <v-img
+        :src="profileImageSource"
+        alt="Image of the contact person for this project."
+        id="contact-photo"
+      />
       <v-container id="name-fields">
-        <v-text-field label="First name" variant="outlined" density="compact" hide-details="auto" v-model="project.contact?.firstName"/>
-        <v-text-field label="Last name" variant="outlined" density="compact" hide-details="auto" v-model="project.contact?.lastName"/>
-        <v-text-field label="Email" variant="outlined" id="contact-email" density="compact" hide-details="auto" v-model="project.contact?.email"/>
+        <v-text-field
+          label="First name"
+          variant="outlined"
+          density="compact"
+          hide-details="auto"
+          v-model="project.contact.firstName"
+          :disabled="!projectIsEdited"
+        />
+        <v-text-field
+          label="Last name"
+          variant="outlined"
+          density="compact"
+          hide-details="auto"
+          v-model="project.contact.lastName"
+          :disabled="!projectIsEdited"
+        />
+        <v-text-field
+          label="Email"
+          variant="outlined"
+          id="contact-email"
+          density="compact"
+          hide-details="auto"
+          v-model="project.contact.email"
+          :disabled="!projectIsEdited"
+        />
       </v-container>
     </v-container>
     <v-container id="contact-social-separator">
-      <v-divider  vertical inset/>
+      <v-divider vertical inset />
     </v-container>
     <v-container id="socials">
-      <v-combobox label="Socials" hint="Select your social media platforms" variant="outlined" :items="SOCIALS" item-title="name"/>
+      <v-combobox
+        v-show="projectIsEdited"
+        label="Socials"
+        hint="Select your social media platforms"
+        variant="outlined"
+        :items="SOCIALS"
+        item-title="name"
+      />
     </v-container>
   </v-container>
   <div v-else>
@@ -167,22 +259,23 @@ onMounted(async () => {
 #project-header {
   grid-area: project-header;
   display: grid;
-  grid-template-columns: repeat(12,1fr);
+  grid-template-columns: repeat(12, 1fr);
   grid-template-rows: repeat(3, 1fr);
   grid-template:
-  'project-name project-name project-name project-name project-name project-name project-name project-name project-name project-name project-name project-name'
-  'category category category category category category category category category category category category'
-  'toolbar toolbar toolbar toolbar toolbar toolbar toolbar toolbar toolbar toolbar toolbar toolbar ';
+    'project-name project-name project-name project-name project-name project-name project-name project-name project-name project-name project-name project-name'
+    'category category category category category category category category category category category category'
+    'toolbar toolbar toolbar toolbar toolbar toolbar toolbar toolbar toolbar toolbar toolbar toolbar ';
 
-  @media(min-width: 768px) {
+  @media (min-width: 768px) {
     grid-template-rows: auto;
-    grid-template: 
-    'project-name project-name project-name project-name project-name project-name project-name project-name project-name toolbar toolbar toolbar'
-    'category category category category category category category category category category category category';
+    grid-template:
+      'project-name project-name project-name project-name project-name project-name project-name project-name project-name toolbar toolbar toolbar'
+      'category category category category category category category category category category category category';
   }
 }
 
-#project-name { /** TODO: investigate the wrapper container */
+#project-name {
+  /** TODO: investigate the wrapper container */
   grid-area: project-name;
   padding: 0;
   width: 100%;
@@ -195,7 +288,7 @@ onMounted(async () => {
   gap: 1rem;
   padding: 0;
 
-  @media(min-width: 768px) {
+  @media (min-width: 768px) {
     grid-area: 'project-details';
     display: grid;
     grid-template: 'project-description vision project-price';
@@ -266,15 +359,15 @@ h2 {
   flex-direction: column;
   gap: 1rem;
 
-  @media(min-width: 768px) {
+  @media (min-width: 768px) {
     grid-area: photos;
     display: grid;
     grid-template-columns: repeat(12, 1fr);
     grid-template-rows: repeat(3, auto);
-    grid-template: 
-    "selected-photo selected-photo selected-photo selected-photo selected-photo selected-photo photo-selector photo-selector photo-selector photo-selector photo-selector photo-selector"
-    "selected-photo selected-photo selected-photo selected-photo selected-photo selected-photo photo-selector photo-selector photo-selector photo-selector photo-selector photo-selector"
-    "selected-photo selected-photo selected-photo selected-photo selected-photo selected-photo add-photo-button add-photo-button add-photo-button select-photo-button select-photo-button select-photo-button";
+    grid-template:
+      'selected-photo selected-photo selected-photo selected-photo selected-photo selected-photo photo-selector photo-selector photo-selector photo-selector photo-selector photo-selector'
+      'selected-photo selected-photo selected-photo selected-photo selected-photo selected-photo photo-selector photo-selector photo-selector photo-selector photo-selector photo-selector'
+      'selected-photo selected-photo selected-photo selected-photo selected-photo selected-photo add-photo-button add-photo-button add-photo-button select-photo-button select-photo-button select-photo-button';
   }
 }
 
@@ -290,7 +383,7 @@ h2 {
   align-items: center;
   text-align: center;
   height: 100%;
-  
+
   @media (min-width: 768px) {
     width: 400px;
     grid-area: selected-photo;
@@ -307,7 +400,7 @@ h2 {
   overflow-y: auto;
   padding: 0;
 
-  @media(min-width: 768px) {
+  @media (min-width: 768px) {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     grid-template-rows: auto;
@@ -346,9 +439,9 @@ h2 {
   display: grid;
   grid-template-rows: repeat(2, 1fr);
   grid-template-columns: repeat(12, 1fr);
-  grid-template: 
-  "contact-photo name-fields name-fields name-fields name-fields"
-  "contact-email contact-email contact-email contact-email contact-email";
+  grid-template:
+    'contact-photo name-fields name-fields name-fields name-fields'
+    'contact-email contact-email contact-email contact-email contact-email';
   align-items: center;
 }
 

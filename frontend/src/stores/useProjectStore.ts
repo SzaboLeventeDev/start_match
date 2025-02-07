@@ -8,6 +8,7 @@ import useAuthenticationStore from './useAuthenticationStore'
 export const useProjectStore = defineStore('project', (): ProjectStore => {
   let myProjects = ref<Project[]>([])
   let projectToSave = ref<ProjectToAdd | null>(null)
+  let originalProjectWhileEdit = ref<Project | null>(null)
 
   const loadMyProjects = async (): Promise<void> => {
     const { projects } = await sendRequest('project/my-projects', 'GET', undefined, undefined, true)
@@ -36,7 +37,12 @@ export const useProjectStore = defineStore('project', (): ProjectStore => {
       startDate: new Date(Date.now()),
       startingAmount: 0,
       isLogicalDeleted: false,
-      categoryId: null
+      categoryId: null,
+      contact: {
+        firstName: '',
+        lastName: '',
+        email: ''
+      }
     }
   }
 
@@ -63,14 +69,26 @@ export const useProjectStore = defineStore('project', (): ProjectStore => {
   const getProject = (projectId: number): Project | undefined => {
     return myProjects.value.find((project) => project.projectId === projectId)
   }
+
+  /**
+   * @function handleCopyProjectBeforeEdit
+   * @description Save a deep copy of the project object before the edition. Before saving the updated item and the originalProjectWhiteEdit will be compared.
+   * @param item The opened project
+   * @returns void
+   */
+  const handleCopyProjectBeforeEdit = (item: Project): void => {
+    originalProjectWhileEdit.value = { ...item }
+  }
   return {
     myProjects,
     projectToSave,
+    originalProjectWhileEdit,
     loadMyProjects,
     updateProject,
     addProject,
     saveNewProject,
     cancelNewProject,
-    getProject
+    getProject,
+    handleCopyProjectBeforeEdit
   }
 })

@@ -18,7 +18,7 @@ export type Project = {
   startingAmount: number
   currencyId: number
   isLogicalDeleted: boolean
-  contact?: Contact
+  contact: Contact
   currency?: Currency
   category?: ProjectCategory
 }

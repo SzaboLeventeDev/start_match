@@ -18,6 +18,14 @@ const inputValidationRules = {
           ? true
           : 'Length of category name should be between 1 and 50 chars!'
     }
+  },
+  project: {
+    projectName: (value: string) =>
+      value.length <= 1 && value.length >= 150
+        ? true
+        : 'The length of the title should between 1 and 150 chars!',
+    description: (value: string) => (value.length <= 1000 ? true : 'Too long description!'),
+    startPrice: (value: number) => (value >= 1 ? true : 'The price has to be at least 1.')
   }
 }
 

@@ -34,10 +34,12 @@ export interface ProjectCategoryStore {
 export interface ProjectStore {
   myProjects: Ref<Project[]>
   projectToSave: Ref<ProjectToAdd | null>
+  originalProjectWhileEdit: Ref<Project | null>
   loadMyProjects: () => Promise<void>
   updateProject: (item: Project) => Promise<void>
   addProject: () => void
   saveNewProject: () => Promise<void>
   cancelNewProject: () => void
   getProject: (projectId: number) => Project | undefined
+  handleCopyProjectBeforeEdit: (item: Project) => void
 }
