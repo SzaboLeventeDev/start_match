@@ -187,4 +187,9 @@ h1 {
   width: auto;
   gap: 1rem;
   }
+
+.projectListWrapper > a {
+  text-decoration: none;
+  cursor: pointer;
+}
 </style>
