@@ -15,8 +15,9 @@ export const useProjectStore = defineStore('project', (): ProjectStore => {
     myProjects.value = projects
   }
 
-  const updateProject = async (item: Project): Promise<void> => {
-    const { project } = await sendRequest(
+  const updateProject = async (item: Project): Promise<Project> => {
+    console.log('update project')
+    const { project, error } = await sendRequest(
       `project/update/${item.projectId}`,
       'PUT',
       item,
@@ -24,10 +25,16 @@ export const useProjectStore = defineStore('project', (): ProjectStore => {
       true
     )
 
-    if (project) myProjects.value.push(project)
+    if (error) {
+      throw Error(error)
+    }
+
+    myProjects.value.push(project)
+    return project
   }
 
   const addProject = (): void => {
+    console.log('add new project')
     const authenticationStore = useAuthenticationStore()
     projectToSave.value = {
       projectName: '',
@@ -46,20 +53,25 @@ export const useProjectStore = defineStore('project', (): ProjectStore => {
     }
   }
 
-  const saveNewProject = async (): Promise<void> => {
+  const saveNewProject = async (): Promise<Project> => {
     if (projectToSave.value !== null) {
-      const { project } = await sendRequest(
+      const { project, error } = await sendRequest(
         'project/add',
         'POST',
         projectToSave.value,
         undefined,
         true
       )
-      if (project) {
-        myProjects.value.push(project)
-        projectToSave.value = null
+
+      if (error) {
+        throw Error(error)
       }
+
+      myProjects.value.push(project)
+      projectToSave.value = null
+      return project
     }
+    throw Error('No project to save!')
   }
 
   const cancelNewProject = (): void => {

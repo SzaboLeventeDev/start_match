@@ -108,6 +108,11 @@ const router = createRouter({
       name: 'mySelectedProject',
       path: '/my-projects/:projectId',
       component: () => import('@/views/core/project/MyProjectView.vue')
+    },
+    {
+      name: 'addNewProject',
+      path: '/my-projects/add',
+      component: () => import('@/views/core/project/MyProjectView.vue')
     }
     // {
     //   path: '/about',

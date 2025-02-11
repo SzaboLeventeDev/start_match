@@ -1,19 +1,22 @@
 <script setup lang="ts">
 import { useMasterDataStore } from '@/stores/masterData/useMasterDataStore'
 import { useProjectStore } from '@/stores/useProjectStore'
-import { type Project } from '@/types'
+import { type Project, type ProjectToAdd } from '@/types'
 import { storeToRefs } from 'pinia'
-import { computed, onBeforeMount, onMounted, ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { computed, onBeforeMount, onMounted, ref, watch } from 'vue'
+import { useRoute, type RouteLocationNormalized } from 'vue-router'
 import TheCollectedPriceStatusBar from '@/components/ui/TheCollectedPriceStatusBar.vue'
 import { useProjectCategoryStore } from '@/stores/masterData/useProjectCategoryStore'
 import { useCurrencyStore } from '@/stores/masterData/useCurrencyStore'
 import { DATE_FORMAT_HINT } from '@/constants/constants'
 import inputValidationRules from '@/helpers/inputValidationRules'
+import router from '@/router'
 
 const projectId = ref<number>()
-const project = ref<Project | null>(null)
+const project = ref<Project | ProjectToAdd | null>(null)
 const projectIsEdited = ref<boolean>(false)
+const existingProjectEdited = computed(() => projectIsEdited.value && 'projectId' in project.value!)
+const newProjectEdited = computed(() => projectIsEdited.value && !('projectId' in project.value!))
 
 const profileImageSource = computed(
   () => project.value?.contact?.profileImage ?? '/profilePlaceholder.jpg'
@@ -25,10 +28,10 @@ const currencyStore = useCurrencyStore()
 const masterDataStore = useMasterDataStore()
 const projectCategoryStore = useProjectCategoryStore()
 
-const { getProject, handleCopyProjectBeforeEdit, updateProject } = projectStore
+const { getProject, handleCopyProjectBeforeEdit, updateProject, addProject, saveNewProject } = projectStore
 const { projectCategories } = storeToRefs(projectCategoryStore)
 const { currencies } = storeToRefs(currencyStore)
-const { originalProjectWhileEdit } = storeToRefs(projectStore)
+const { originalProjectWhileEdit, projectToSave } = storeToRefs(projectStore)
 
 const SOCIALS: { name: string; icon: string }[] = [
   { name: 'Facebook', icon: '' },
@@ -37,6 +40,30 @@ const SOCIALS: { name: string; icon: string }[] = [
   { name: 'LinkedIn', icon: '' },
   { name: 'Website', icon: '' }
 ]
+
+const projectStartDateFormatted = computed({
+  get: (): string => {
+    if (projectToSave.value?.startDate instanceof Date) {
+      return projectToSave.value.startDate.toISOString().substring(0, 10);
+    } else if(project.value?.startDate instanceof Date) {
+      return project.value?.startDate.toISOString().substring(0,10);
+    }
+    return '';
+  },
+  set: (value: string) => {
+    if(value.length < 10) return
+    const parsedDate = new Date(value);
+    if (!isNaN(parsedDate.getTime())) {
+      if(projectToSave.value) {
+        projectToSave.value!.startDate = parsedDate;
+      } else if(project.value) {
+        project.value!.startDate = parsedDate;
+      }
+    } else {
+      console.warn('Érvénytelen dátumformátum:', value);
+    }
+  },
+});
 
 onBeforeMount(() => {
   const id = route.params.projectId
@@ -48,14 +75,24 @@ onBeforeMount(() => {
 onMounted(async () => {
   await masterDataStore.getAndInitProjectCategoryStore()
   await masterDataStore.getAndInitCurrencyStore()
+
   if (projectId.value) {
     const result = getProject(projectId.value)
     project.value = result ? result : null
+    return
   }
+
+  addProject()
+  project.value = projectToSave.value
+  projectIsEdited.value = true
 })
 
+watch(route, (newRoute: RouteLocationNormalized, oldRoute: RouteLocationNormalized) => {
+  console.log(`Route changed`, {old: oldRoute.name, new: newRoute.name}); // Debug log
+  projectIsEdited.value = false;
+});
 const handleEnableEditProject = () => {
-  if (project.value) {
+  if ('projectId' in project.value!) {
     projectIsEdited.value = true
     handleCopyProjectBeforeEdit(project.value)
   }
@@ -64,6 +101,19 @@ const handleEnableEditProject = () => {
 const handleUndoEditProject = () => {
   project.value = originalProjectWhileEdit.value
   originalProjectWhileEdit.value = null
+  projectIsEdited.value = false
+}
+
+const handleSaveProject = async () => {
+  const project = await saveNewProject();
+  if(route.name === "mySelectedProject") {
+    projectIsEdited.value = false;
+  }
+  router.push({name: 'mySelectedProject', params: {'projectId': project.projectId}})
+}
+
+const handleUpdateProject = async () => {
+  const updatedProject = await updateProject(project.value as Project)
   projectIsEdited.value = false
 }
 </script>
@@ -81,7 +131,7 @@ const handleUndoEditProject = () => {
         />
       </v-container>
       <v-combobox
-        v-model="project.categoryId"
+        v-model.number="project.categoryId"
         :items="projectCategories"
         label="Project category"
         variant="outlined"
@@ -90,12 +140,16 @@ const handleUndoEditProject = () => {
         style="grid-area: category"
         :disabled="!projectIsEdited"
         :rules="[inputValidationRules.required]"
+        :return-object="false"
       />
       <v-container id="toolbar">
         <base-button v-show="projectIsEdited" :rounded="true" @click="handleUndoEditProject">
           <v-icon icon="mdi-undo" />
         </base-button>
-        <base-button v-show="projectIsEdited" :rounded="true" @click="updateProject(project)">
+        <base-button v-show="existingProjectEdited" :rounded="true" @click="handleUpdateProject">
+          <v-icon icon="mdi-floppy" />
+        </base-button>
+        <base-button v-show="newProjectEdited" :rounded="true" @click="handleSaveProject">
           <v-icon icon="mdi-floppy" />
         </base-button>
         <base-button v-show="!projectIsEdited" :rounded="true" @click="handleEnableEditProject">
@@ -135,17 +189,18 @@ const handleUndoEditProject = () => {
         />
         <v-combobox
           label="Currency"
-          v-model="project.currencyId"
+          v-model.number="project.currencyId"
           :items="currencies"
           item-value="currencyId"
           item-title="name"
           variant="outlined"
           :disabled="!projectIsEdited"
           :rules="[inputValidationRules.required]"
+          :return-object="false"
         />
         <v-text-field
           label="Starting Date"
-          v-model="project.startDate"
+          v-model="projectStartDateFormatted"
           variant="outlined"
           :hint="DATE_FORMAT_HINT"
           :disabled="!projectIsEdited"
