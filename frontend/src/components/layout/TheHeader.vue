@@ -1,33 +1,45 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import NavButton from '../ui/NavButton.vue';
-import useAuthenticationStore from '@/stores/useAuthenticationStore';
-import router from '@/router';
-import { useAuthorizationStore } from '@/stores/useAuthorizationStore';
-import { storeToRefs } from 'pinia';
+import { ref, computed } from 'vue'
+import NavButton from '../ui/NavButton.vue'
+import useAuthenticationStore from '@/stores/useAuthenticationStore'
+import router from '@/router'
+import { useAuthorizationStore } from '@/stores/useAuthorizationStore'
+import { storeToRefs } from 'pinia'
 
-const isMobileNavBarVisible = ref(false);
-const authenticationStore = useAuthenticationStore();
-const authorizationStore = useAuthorizationStore();
+const isMobileNavBarVisible = ref(false)
+const authenticationStore = useAuthenticationStore()
+const authorizationStore = useAuthorizationStore()
 
-const { logoutUser } = authenticationStore;
-const { isAdmin } = storeToRefs(authorizationStore);
+const { logoutUser } = authenticationStore
+const { isAdmin } = storeToRefs(authorizationStore)
 
-const userId = computed(() => authenticationStore.getUserId);
-const isLoggedIn = computed(() => authenticationStore.getIsLoggedIn);
-const isLoggedInAdmin = computed(() => isLoggedIn && isAdmin.value);
+const userId = computed(() => authenticationStore.getUserId)
+const isLoggedIn = computed(() => authenticationStore.getIsLoggedIn)
+const isLoggedInAdmin = computed(() => isLoggedIn && isAdmin.value)
 const toggleMobileNav = () => {
-  isMobileNavBarVisible.value = !isMobileNavBarVisible.value;
+  isMobileNavBarVisible.value = !isMobileNavBarVisible.value
 }
 
 const handleLoginOrLogout = () => {
-  if (isLoggedIn) {
-    logoutUser();
-    router.push({ name: 'home' });
-    return;
+  if (isLoggedIn.value) {
+    logoutUser()
+    toggleMobileNav();
+    router.push({ name: 'home' })
+    return
   }
-  router.push({ name: 'login' });
-  return;
+  toggleMobileNav();
+  router.push({ name: 'login' })
+  return
+}
+
+const handleLoginOrLogoutOnDesktop = () => {
+  if (isLoggedIn.value) {
+    logoutUser()
+    router.push({ name: 'home' })
+    return
+  }
+  router.push({ name: 'login' })
+  return
 }
 </script>
 <template>
@@ -43,7 +55,7 @@ const handleLoginOrLogout = () => {
       @click="toggleMobileNav"
     />
     <v-container class="navbar">
-      <router-link v-if="isLoggedIn" :to="{name: 'myProjects'}">
+      <router-link v-if="isLoggedIn" :to="{ name: 'myProjects' }">
         <nav-button>My Projects</nav-button>
       </router-link>
       <nav-button>About us</nav-button>
@@ -65,7 +77,7 @@ const handleLoginOrLogout = () => {
         <nav-button>Profile</nav-button>
       </router-link>
       <router-link :to="{ name: isLoggedIn ? 'home' : 'login' }">
-        <nav-button @click="handleLoginOrLogout">
+        <nav-button @click="handleLoginOrLogoutOnDesktop">
           <template #icon>
             <v-icon :icon="isLoggedIn ? 'mdi-logout' : 'mdi-login'" />
           </template>
@@ -75,14 +87,14 @@ const handleLoginOrLogout = () => {
     </v-container>
   </v-container>
   <v-container v-if="isMobileNavBarVisible" class="sidebar isVisible">
-    <router-link v-if="isLoggedIn" :to="{name: 'myProjects'}">
+    <router-link v-if="isLoggedIn" :to="{ name: 'myProjects' }">
       <nav-button>My Projects</nav-button>
     </router-link>
     <nav-button v-if="!isLoggedIn">About us</nav-button>
     <nav-button v-if="!isLoggedIn">Our mission</nav-button>
     <nav-button>Contact</nav-button>
     <nav-button>Q&A</nav-button>
-    <router-link v-if="isLoggedInAdmin" :to="{name: 'masterData'}">
+    <router-link v-if="isLoggedInAdmin" :to="{ name: 'masterData' }">
       <nav-button>Master data</nav-button>
     </router-link>
     <router-link
