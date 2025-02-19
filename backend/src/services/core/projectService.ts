@@ -1,4 +1,3 @@
-import { where } from 'sequelize';
 import { sequelizeToResponseArrayHelper, sequelizeToResponseHelper } from '../../helper/sequelizeToResponseHelper';
 import { Project, ProjectAttributes } from '../../models/project';
 import { ProjectToAdd } from '../../types/project';
@@ -7,8 +6,8 @@ import { User } from '../../models/user';
 import { Currency } from '../../models/currency';
 import { ProjectCategory } from '../../models/projectCategory';
 
-export const getProjects = async (): Promise<ProjectAttributes[]> => {
-  const records = await Project.findAll({ include: [{ model: User, as: 'contact' }, { model: Currency }, { model: ProjectCategory, as: 'category' }] });
+export const getMyProjects = async (userId: number): Promise<ProjectAttributes[]> => {
+  const records = await Project.findAll({ where: { contactId: userId }, include: [{ model: User, as: 'contact' }, { model: Currency }, { model: ProjectCategory, as: 'category' }] });
   return sequelizeToResponseArrayHelper<ProjectAttributes>(records);
 };
 

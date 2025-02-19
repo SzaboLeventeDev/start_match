@@ -71,7 +71,7 @@ router.put('/master-data/project-category/update/:projectCategoryId', cors(confi
 router.delete('/master-data/project-category/delete/:projectCategoryId', cors(config.corsOptions), projectCategoryController.deleteProjectCategory);
 
 /** Project related endpoints */
-router.get('/project/my-projects', cors(config.corsOptions), projectController.getProjects);
+router.get('/project/my-projects', cors(config.corsOptions), projectController.getMyProjects);
 router.post('/project/add', cors(config.corsOptions), validateModel(Project, newProjectValidationRules), projectController.addProject);
 router.put('/project/update/:projectId', cors(config.corsOptions), validateModel(Project, projectValidationRules), projectController.updateProject);
 router.delete('/project/delete/:projectId', cors(config.corsOptions), validateModel(Project, projectValidationRules), projectController.deleteProject);

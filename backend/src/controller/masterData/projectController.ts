@@ -1,17 +1,23 @@
 import { NextFunction, Request, Response } from 'express';
-import { addProject, deleteProject, getProjects, updateProject } from '../../services/core/projectService';
+import { addProject, deleteProject, getMyProjects, updateProject } from '../../services/core/projectService';
 
 interface ProjectController {
-  getProjects: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+  getMyProjects: (req: Request, res: Response, next: NextFunction) => Promise<void>;
   addProject: (req: Request, res: Response, next: NextFunction) => Promise<void>;
   updateProject: (req: Request, res: Response, next: NextFunction) => Promise<void>;
   deleteProject: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+  discoverProjects: (req: Request, res: Response, next: NextFunction) => Promise<void>;
 }
 
 export const projectController: ProjectController = {
-  async getProjects(_: Request, res: Response, next: NextFunction): Promise<void> {
+  async getMyProjects(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const projects = await getProjects();
+      const userId = Number(req.query.userId);
+      if (!userId || isNaN(userId) || userId <= 0) {
+        res.status(400).json({ message: 'Invalid user ID!' });
+      }
+
+      const projects = await getMyProjects(userId);
 
       if (!projects) {
         res.status(404).json({ message: 'No projects found!' });
@@ -58,6 +64,13 @@ export const projectController: ProjectController = {
         return;
       }
       res.status(200).json({ message: 'Project deleted successfully!' });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async discoverProjects(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
     } catch (error) {
       next(error);
     }

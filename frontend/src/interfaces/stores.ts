@@ -35,7 +35,7 @@ export interface ProjectStore {
   myProjects: Ref<Project[]>
   projectToSave: Ref<ProjectToAdd | null>
   originalProjectWhileEdit: Ref<Project | null>
-  loadMyProjects: () => Promise<void>
+  loadMyProjects: (userId: number) => Promise<void>
   updateProject: (item: Project) => Promise<Project>
   addProject: () => void
   saveNewProject: () => Promise<Project>

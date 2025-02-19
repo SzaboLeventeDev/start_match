@@ -10,8 +10,15 @@ export const useProjectStore = defineStore('project', (): ProjectStore => {
   let projectToSave = ref<ProjectToAdd | null>(null)
   let originalProjectWhileEdit = ref<Project | null>(null)
 
-  const loadMyProjects = async (): Promise<void> => {
-    const { projects } = await sendRequest('project/my-projects', 'GET', undefined, undefined, true)
+  const loadMyProjects = async (userId: number): Promise<void> => {
+    const query = `userId=${userId}`
+    const { projects } = await sendRequest(
+      `project/my-projects?${query}`,
+      'GET',
+      undefined,
+      undefined,
+      true
+    )
     myProjects.value = projects
   }
 
